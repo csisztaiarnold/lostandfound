@@ -1,0 +1,25 @@
+body {
+  padding-bottom: 20px;
+}
+
+#submit-form {
+
+  span.required {
+    color:#aa0000;
+  }
+
+  .label-container {
+    padding-top: 20px;
+  }
+
+  .submit-button-container {
+    clear:both;
+
+    input {
+      width: 40%;
+      margin-top: 20px;
+    }
+
+  }
+
+}

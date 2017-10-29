@@ -2,6 +2,6 @@
 
 @section('main')
 
-    <h2>{{ __('Home Page') }}</h2>
+    <h2>{{ __('List of items') }}</h2>
 
 @endsection

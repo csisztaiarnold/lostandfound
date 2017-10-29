@@ -17,7 +17,14 @@
 
     <header>
 
-        <nav></nav>
+        <h1>Lost and Found</h1>
+
+        <nav>
+            <ul>
+                <li><a href="{{ URL::to('/') }}" title="{{ __('Home') }}">{{ __('Home') }}</a></li>
+                <li><a href="{{ URL::to('/items/create') }}" title="{{ __('Add new item') }}">{{ __('Add new item') }}</a></li>
+            </ul>
+        </nav>
 
     </header>
 
