@@ -19,7 +19,7 @@ class CreateItemsTable extends Migration
             $table->string('title', 1000);
             $table->string('type');
             $table->text('description');
-            $table->string('email');
+            $table->string('email')->nullable();
             $table->string('location');
             $table->timestamps();
         });

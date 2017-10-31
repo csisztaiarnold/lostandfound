@@ -14,6 +14,14 @@
         </div>
     @endif
 
+    @if (\Session::has('success'))
+        <div class="alert alert-success">
+            <ul>
+                <li>{!! \Session::get('success') !!}</li>
+            </ul>
+        </div>
+    @endif
+
     {!! Form::open(['url' => 'items','id' => 'submit-form']) !!}
 
         <div class="col-xs-12 label-container">

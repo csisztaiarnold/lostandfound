@@ -15,4 +15,6 @@ Route::get('/', function () {
     return view('index');
 });
 
+Route::get('items/success', 'ItemController@success');
 Route::resource('items', 'ItemController');
+

@@ -26,7 +26,10 @@ class ItemController extends Controller
      */
     public function index()
     {
-        return view('items.create');
+        $items = Item::all();
+        return view('items.index')->with([
+            'items' => $items,
+        ]);
     }
 
     /**
@@ -47,18 +50,39 @@ class ItemController extends Controller
     public function store(Request $request)
     {
         $validate = Validator::make($request->all(), [
-            'type' => 'required',
-            'title' => 'required',
-            'location' => 'required',
-            'description' => 'required',
-            'email' => 'nullable|sometimes|email',
+            'type'          => 'required',
+            'title'         => 'required',
+            'location'      => 'required',
+            'description'   => 'required',
+            'email'         => 'nullable|sometimes|email',
         ]);
 
         if($validate->fails()) {
             return back()->witherrors($validate)->withInput();
         } else {
-            // TODO: Store item
+            $item = new Item;
+            $item->title        = $request->title;
+            $item->location     = $request->location;
+            $item->description  = $request->description;
+            $item->email        = $request->email;
+            $item->type         = $request->type;
+            $item->unique_id    = uniqid();
+            $item->save();
+
+            // TODO: send email with deletion link if an email was submitted
+
+            return redirect('items/success');
         }
+    }
+
+    /**
+     * Display a success page
+     *
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function success()
+    {
+        return view('items.success');
     }
 
     /**
