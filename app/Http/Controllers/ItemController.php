@@ -81,7 +81,7 @@ class ItemController extends Controller
             $item->save();
 
             if(!empty($request->email)) {
-                $itemActionsLink = \URL::to('items/edit').'/'.$uniqueId;
+                $itemActionsLink = \URL::to('items/edit').'/'.$request->unique_id;
                 $email = $request->email;
                 Mail::send('emails.item-created-success', ['itemActionsLink' => $itemActionsLink], function($message) use ($email) {
                     $message->from(Config::get('site.success_email_from'), __('Your editing/deleting link for a Lost and Found item'));
