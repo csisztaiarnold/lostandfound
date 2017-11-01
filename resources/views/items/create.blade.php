@@ -70,6 +70,8 @@
 
         -->
 
+        {!! Form::hidden('unique_id', $unique_id) !!}
+
         <div class="col-md-12 submit-button-container text-center">
             {!! Form::submit(__('Submit'), ['class="form-control btn btn-primary"']) !!}
         </div>

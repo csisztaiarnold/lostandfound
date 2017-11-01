@@ -41,7 +41,16 @@ class ItemController extends Controller
      */
     public function create()
     {
-        return view('items.create');
+        if(Session::get('unique_id') === null) {
+            // The unique ID will be used for file uploads and for the deletion link
+            $uniqueId = \App\Helpers\RandomStringHelper::getToken(32);
+            Session::put('unique_id', $uniqueId);
+        } else {
+            $uniqueId = Session::get('unique_id');
+        }
+        return view('items.create')->with([
+            'unique_id' => $uniqueId,
+        ]);
     }
 
     /**
@@ -62,14 +71,13 @@ class ItemController extends Controller
         if($validate->fails()) {
             return back()->witherrors($validate)->withInput();
         } else {
-            $uniqueId = \App\Helpers\RandomStringHelper::getToken(32);
             $item = new Item;
             $item->title        = $request->title;
             $item->location     = $request->location;
             $item->description  = $request->description;
             $item->email        = $request->email;
             $item->type         = $request->type;
-            $item->unique_id    = $uniqueId;
+            $item->unique_id    = $request->unique_id;
             $item->save();
 
             if(!empty($request->email)) {
