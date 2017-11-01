@@ -48,6 +48,7 @@
 
         <div class="col-xs-12 label-container">
             {!! Form::label('description', __('Describe the item')) !!} <span class="required">*</span>
+            <div class="small">{{ __('Describe the item, the location where it was lost or found, and put here your contact info too.') }}</div>
         </div>
         <div class="col-xs-12">
             {!! Form::textarea('description', '', ['class="form-control"', 'required']) !!}
@@ -55,6 +56,7 @@
 
         <div class="col-xs-12 label-container">
             {!! Form::label('email', __('Email')) !!}
+            <div class="small">{{ __('Submitting an email address is optional, but in case you want to get an email with a link for editing and deleting an item, it\'s mandatory. Otherwise, the article will be deleted automatically after 30 days.') }}</div>
         </div>
         <div class="col-xs-12">
             {!! Form::email('email', '', ['class="form-control"']) !!}

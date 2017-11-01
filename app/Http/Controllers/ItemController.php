@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Item;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Config;
 
 class ItemController extends Controller
 {
@@ -60,16 +62,24 @@ class ItemController extends Controller
         if($validate->fails()) {
             return back()->witherrors($validate)->withInput();
         } else {
+            $uniqueId = \App\Helpers\RandomStringHelper::getToken(32);
             $item = new Item;
             $item->title        = $request->title;
             $item->location     = $request->location;
             $item->description  = $request->description;
             $item->email        = $request->email;
             $item->type         = $request->type;
-            $item->unique_id    = uniqid();
+            $item->unique_id    = $uniqueId;
             $item->save();
 
-            // TODO: send email with deletion link if an email was submitted
+            if(!empty($request->email)) {
+                $itemActionsLink = \URL::to('items/edit').'/'.$uniqueId;
+                $email = $request->email;
+                Mail::send('emails.item-created-success', ['itemActionsLink' => $itemActionsLink], function($message) use ($email) {
+                    $message->from(Config::get('site.success_email_from'), __('Your editing/deleting link for a Lost and Found item'));
+                    $message->to($email);
+                });
+            }
 
             return redirect('items/success');
         }
