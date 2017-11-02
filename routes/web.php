@@ -16,5 +16,6 @@ Route::get('/', function () {
 });
 
 Route::get('items/success', 'ItemController@success');
+Route::any('items/images', 'ItemController@images');
 Route::resource('items', 'ItemController');
 

@@ -3,5 +3,6 @@
 return [
 
     'success_email_from' => 'email@example.com',
+    'image_limit_per_user' => 5,
 
 ];

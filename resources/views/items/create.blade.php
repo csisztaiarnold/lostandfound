@@ -62,18 +62,8 @@
             {!! Form::email('email', '', ['class="form-control"']) !!}
         </div>
 
-        <!-- TODO: image upload
-
-        <div class="col-xs-12">
-            {{ __('Upload pictures (up to 5)') }}
-        </div>
-
-        -->
-
-        {!! Form::hidden('unique_id', $unique_id) !!}
-
         <div class="col-md-12 submit-button-container text-center">
-            {!! Form::submit(__('Submit'), ['class="form-control btn btn-primary"']) !!}
+            {!! Form::submit(__('Save and proceed to image upload'), ['class="form-control btn btn-primary"']) !!}
         </div>
 
         {!! Form::token() !!}

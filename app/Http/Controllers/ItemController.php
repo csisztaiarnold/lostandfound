@@ -41,22 +41,15 @@ class ItemController extends Controller
      */
     public function create()
     {
-        if(Session::get('unique_id') === null) {
-            // The unique ID will be used for file uploads and for the deletion link
-            $uniqueId = \App\Helpers\RandomStringHelper::getToken(32);
-            Session::put('unique_id', $uniqueId);
-        } else {
-            $uniqueId = Session::get('unique_id');
-        }
-        return view('items.create')->with([
-            'unique_id' => $uniqueId,
-        ]);
+        return view('items.create');
     }
 
+
     /**
-     * Store the item
+     * Stores the item in the database and redirects to the image upload page
      *
-     * @param Request $request Data from the form
+     * @param Request $request Form data
+     * @return \Illuminate\Routing\Redirector
      */
     public function store(Request $request)
     {
@@ -71,36 +64,78 @@ class ItemController extends Controller
         if($validate->fails()) {
             return back()->witherrors($validate)->withInput();
         } else {
+            $uniqueId = \App\Helpers\RandomStringHelper::getToken(32);
+            Session::put('unique_id', $uniqueId);
             $item = new Item;
             $item->title        = $request->title;
             $item->location     = $request->location;
             $item->description  = $request->description;
             $item->email        = $request->email;
             $item->type         = $request->type;
-            $item->unique_id    = $request->unique_id;
+            $item->unique_id    = $uniqueId;
+
+            // The item is not active yet! The 'active' column defaults to 0
+            // Before activating it, first of all, let's save some images.
+            // Secondly, the final activation will be performed by an admin
             $item->save();
 
-            if(!empty($request->email)) {
-                $itemActionsLink = \URL::to('items/edit').'/'.$request->unique_id;
-                $email = $request->email;
-                Mail::send('emails.item-created-success', ['itemActionsLink' => $itemActionsLink], function($message) use ($email) {
-                    $message->from(Config::get('site.success_email_from'), __('Your editing/deleting link for a Lost and Found item'));
-                    $message->to($email);
-                });
-            }
-
-            return redirect('items/success');
+            return redirect('items/images');
         }
     }
 
     /**
-     * Display a success page
+     * Upload images
      *
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     * @param Request $request Form data
+     * @return \Illuminate\View\View|\Illuminate\Routing\Redirector
+     */
+    public function images(Request $request)
+    {
+        // Let the image upload only if the item session exists in the database
+        $item = Item::where('unique_id', Session::get('unique_id'))->first();
+        if(count($item) !== 0) {
+            if(!empty($request->all())) {
+                $validate = Validator::make($request->all(), [
+                    // TODO: image validation
+                ]);
+
+                if ($validate->fails()) {
+                    return back()->witherrors($validate)->withInput();
+                } else {
+                    // TODO: storing the image, limit image number per user (set in config)
+                    $imageLimit = Config::get('site.image_limit_per_user');
+                    return back();
+                }
+            }
+            return view('items.images')->with([
+                'item' => $item,
+            ]);
+        } else {
+            return redirect('items');
+        }
+    }
+
+    /**
+     * Finishing the submission, sending an email, displaying a success page
+     *
+     * @return \Illuminate\View\View
      */
     public function success()
     {
-        return view('items.success');
+        // Is the item still in the database?
+        $item = Item::where('unique_id', Session::get('unique_id'))->first();
+        if(count($item) !== 0) {
+            $email = $item->email;
+            $itemActionsLink = \URL::to('items/edit') . '/' . $item->unique_id;
+            Mail::send('emails.item-created-success', ['itemActionsLink' => $itemActionsLink], function ($message) use ($email) {
+                $message->from(Config::get('site.success_email_from'), __('Your editing/deleting link for a Lost and Found item'));
+                $message->to($email);
+            });
+            Session::forget('unique_id');
+            return view('items.success');
+        } else {
+            return redirect('items');
+        }
     }
 
     /**
