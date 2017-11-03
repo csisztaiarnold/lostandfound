@@ -73,10 +73,14 @@ class ItemController extends Controller
             $item->email        = $request->email;
             $item->type         = $request->type;
             $item->unique_id    = $uniqueId;
+            $item->admin_hash   = \App\Helpers\RandomStringHelper::getToken(32);
 
-            // The item is not active yet! The 'active' column defaults to 0
-            // Before activating it, first of all, let's save some images.
-            // Secondly, the final activation will be performed by an admin
+            // The item is not active yet. The 'active' column defaults to 0,
+            // unless administrator approval is set to false
+            if(Config::get('site.administrator_approval') === false) {
+                $item->active = 1;
+            }
+
             $item->save();
 
             return redirect('items/images');
@@ -126,11 +130,23 @@ class ItemController extends Controller
         $item = Item::where('unique_id', Session::get('unique_id'))->first();
         if(count($item) !== 0) {
             $email = $item->email;
-            $itemActionsLink = \URL::to('items/edit') . '/' . $item->unique_id;
-            Mail::send('emails.item-created-success', ['itemActionsLink' => $itemActionsLink], function ($message) use ($email) {
-                $message->from(Config::get('site.success_email_from'), __('Your editing/deleting link for a Lost and Found item'));
-                $message->to($email);
-            });
+            // Send a mail to the user
+            if($email) {
+                $itemActionsLink = \URL::to('items/edit') . '/' . $item->unique_id;
+                Mail::send('emails.item-created-success', ['itemActionsLink' => $itemActionsLink], function ($message) use ($email) {
+                    $message->from(Config::get('site.success_email_from'), __('Your editing/deleting link for a Lost and Found item'));
+                    $message->to($email);
+                });
+            }
+            // Send a moderation mail to the admin
+            if($email) {
+                $itemActionsLink = \URL::to('items/moderate').'/'.$item->unique_id.'/'.$item->admin_hash;
+                Mail::send('emails.item-created-moderation', ['itemActionsLink' => $itemActionsLink], function ($message) use ($email) {
+                    $message->from(Config::get('site.success_email_from'), __('New item submitted and awaiting moderation'));
+                    $message->to(Config::get('site.administrator_email'));
+                });
+            }
+
             Session::forget('unique_id');
             return view('items.success');
         } else {
