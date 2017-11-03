@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Config;
+use Intervention\Image\ImageManagerStatic as Image;
 
 class ItemController extends Controller
 {
@@ -100,7 +101,7 @@ class ItemController extends Controller
         if(count($item) !== 0) {
             if(!empty($request->all())) {
                 $validate = Validator::make($request->all(), [
-                    // TODO: image validation
+                    'image' => 'required|image|mimes:jpg,png,jpeg,gif|max:12048',
                 ]);
 
                 if ($validate->fails()) {
@@ -108,7 +109,21 @@ class ItemController extends Controller
                 } else {
                     // TODO: storing the image, limit image number per user (set in config)
                     $imageLimit = Config::get('site.image_limit_per_user');
-                    return back();
+
+                    $dirPath = './item_images/'.$item->id;
+                    if(!is_dir($dirPath)) {
+                        mkdir($dirPath);
+                    }
+                    $image       = $request->file('image');
+                    $filename    = $image->getClientOriginalName();
+
+                    $image_resize = Image::make($image->getRealPath());
+                    $image_resize->resize(400, 400, function($constraint) {
+                        $constraint->aspectRatio();
+                    });
+                    $image_resize->save(public_path($dirPath.'/'.$filename));
+                    // TODO: add image to the database
+                    return back()->with('success','images Has been You uploaded successfully.');
                 }
             }
             return view('items.images')->with([
@@ -172,6 +187,17 @@ class ItemController extends Controller
      * @return
      */
     public function edit($id)
+    {
+        // TODO
+    }
+
+    /**
+     * Moderate the item
+     *
+     * @param  int  $id
+     * @return
+     */
+    public function moderate($unique_id, $admin_hash)
     {
         // TODO
     }
