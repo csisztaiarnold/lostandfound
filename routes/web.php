@@ -15,8 +15,12 @@ Route::get('/', function () {
     return view('index');
 });
 
+// Items
 Route::get('items/success', 'ItemController@success');
-Route::any('items/images', 'ItemController@images');
 Route::any('items/moderate/{unique_id}/{admin_hash}', 'ItemController@moderate');
+
+// Images
+Route::any('images/upload', 'ImageController@upload');
+
 Route::resource('items', 'ItemController');
 
