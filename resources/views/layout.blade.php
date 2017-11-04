@@ -10,6 +10,7 @@
     <link href="{{ asset('css/main.css') }}?r=<?php echo rand(); ?>" rel="stylesheet">
     <script src="{{ asset('js/jquery-3.2.1.min.js') }}"></script>
     <script src="{{ asset('js/bootstrap.min.js') }}"></script>
+    <script src="{{ asset('js/sortable/html.sortable.min.js') }}"></script>
 </head>
 <body>
 

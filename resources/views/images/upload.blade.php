@@ -2,6 +2,16 @@
 
 @section('main')
 
+    @if ($errors->any())
+        <div class="col-xs-12 alert alert-danger">
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
     <div class="col-xs-12">
         <div class="preview">
             {{ $item->title }}<br />
@@ -37,12 +47,38 @@
         </div>
     @endif
 
-    <div class="col-xs-12">
+    <div class="col-xs-12 sortable">
         @if($images)
             @foreach($images as $image)
-                <img src="{{ URL::to('/item_images') }}/{{ $item->id }}/{{ $image->filename }}_thumb.{{ $image->extension }}" />
+                <img src="{{ URL::to('/item_images') }}/{{ $item->id }}/{{ $image->filename }}_thumb.{{ $image->extension }}" data-image-id="{{ $image->id }}" />
             @endforeach
         @endif
     </div>
+    <script>
+        $(document).ready(function(){
 
+            sortable('.sortable',{
+                items: 'img' ,
+                placeholder: '<div style="border:1px solid #888888; background-color:#f5f5f5; margin:0; padding:0; display:inline-block; width:200px; height:200px;"></div>',
+            });
+            sortable('.sortable')[0].addEventListener('sortupdate', function(e) {
+                var index;
+                var images = e.detail.newStartList;
+                var imageOrderArray = [];
+                for (index = 0; index < images.length; ++index) {
+                    imageOrderArray[index] = images[index]['dataset']['imageId'];
+                }
+
+                $.ajax({
+                    type: "POST",
+                    url: "{{ URL::to('/') }}/images/reorder",
+                    data: {
+                        imageOrderArray: imageOrderArray,
+                        _token: "{{ csrf_token() }}",
+                    }
+                });
+            });
+
+        });
+    </script>
 @endsection

@@ -33,10 +33,11 @@ class ImageController extends Controller
         $item = Item::where('unique_id', Session::get('unique_id'))->first();
         $imageLimitReached = Image::imageLimitReached($item->id);
         if(count($item) !== 0) {
-            $images = Image::where('item_id', $item->id)->get()->all();
+            $imageLimitReached = Image::imageLimitReached($item->id);
+            $images = Image::where('item_id', $item->id)->orderBy('image_order','asc')->get()->all();
             if(!empty($request->all())) {
                 $validate = Validator::make($request->all(), [
-                    'image' => 'required|image|mimes:jpg,png,jpeg,gif|max:12048',
+                    'image' => 'required|image|mimes:jpg,png,jpeg,gif|max:3000',
                 ]);
 
                 if ($validate->fails()) {
@@ -52,19 +53,21 @@ class ImageController extends Controller
 
                         // TODO: Maybe a check against the database if the filename already exits. Low priority.
                         $filenameUniqueId  = uniqid();
-
+                        $currentMax = Image::where('item_id', $item->id)->max('image_order');
+                        $newMax = 0;
+                        if(Image::where('item_id', $item->id)->count() >= 1) {
+                            $newMax = $currentMax+1;
+                        }
                         $imageUpload = ImageManager::make($image->getRealPath());
                         $imageUpload->save(public_path($dirPath.'/'.$filenameUniqueId.'.'.$extension));
-                        // TODO: keep the original file too.
-                        $imageUpload->resize(400, 400, function($constraint) {
-                            $constraint->aspectRatio();
-                        });
+                        $imageUpload->fit(200, 200);
                         $imageUpload->save(public_path($dirPath.'/'.$filenameUniqueId.'_thumb.'.$extension));
 
                         $image = new Image;
                         $image->item_id     = $item->id;
                         $image->filename    = $filenameUniqueId;
                         $image->extension   = $extension;
+                        $image->image_order = $newMax;
                         $image->save();
 
                         return back()->with('success', __('The image has been uploaded successfully'));
@@ -85,5 +88,28 @@ class ImageController extends Controller
         } else {
             return redirect('items');
         }
+    }
+
+
+    /**
+     * Reorder images and return a JSON status message
+     *
+     * @param Request $request Form data
+     * @return string JSON
+     */
+    public function reorder(Request $request)
+    {
+        try {
+            foreach($request->imageOrderArray as $key => $value){
+                Image::where('id', $value)->update([
+                    'image_order' => $key
+                ]);
+            }
+            $response_array['status'] = 'success';
+        } catch(\Illuminate\Database\QueryException $ex){
+            $response_array['status'] = 'error';
+        }
+        header('Content-type: application/json');
+        echo json_encode($response_array);
     }
 }
