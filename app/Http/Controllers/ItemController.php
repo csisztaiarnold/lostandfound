@@ -42,7 +42,9 @@ class ItemController extends Controller
      */
     public function create()
     {
-        return view('items.create');
+        return view('items.create')->with([
+            'categories' => Item::categories(),
+        ]);
     }
 
 
@@ -80,6 +82,7 @@ class ItemController extends Controller
             $item->description  = $request->description;
             $item->email        = $request->email;
             $item->type         = $request->type;
+            $item->category_id  = $request->category_id;
             $item->unique_id    = $uniqueId;
             $item->admin_hash   = \App\Helpers\RandomStringHelper::getToken(32);
 

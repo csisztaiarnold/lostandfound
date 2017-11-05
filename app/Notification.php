@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Location extends Model
+class Notification extends Model
 {
     public $timestamps = false;
 
@@ -14,7 +14,6 @@ class Location extends Model
      * @var array
      */
     protected $fillable = [
-        'location', 'title', 'email', 'description',
+        'email', 'category_id', 'lat', 'lng', 'distance',
     ];
-
 }

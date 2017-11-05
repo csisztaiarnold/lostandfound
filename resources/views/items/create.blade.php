@@ -32,6 +32,13 @@
         </div>
 
         <div class="col-xs-12 label-container">
+            {!! Form::label('category_id', __('Select a category')) !!} <span class="required">*</span>
+        </div>
+        <div class="col-xs-12">
+            {!! Form::select('category_id', $categories, null, ['class="form-control"']) !!}
+        </div>
+
+        <div class="col-xs-12 label-container">
             {!! Form::label('title', __('What have you lost or found?')) !!} <span class="required">*</span>
         </div>
         <div class="col-xs-12">

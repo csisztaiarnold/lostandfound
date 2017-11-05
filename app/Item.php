@@ -31,4 +31,19 @@ class Item extends Model
     {
         return $this->hasMany('App\Image');
     }
+
+    /**
+     * Get item categories based on the current locale
+     *
+     * @return array Category list
+     */
+    public static function categories()
+    {
+        $locale = \App::getLocale();
+        if (\Config::get('site.item_categories_' . $locale) === null) {
+            return \Config::get('site.item_categories_' . \App::getLocale());
+        } else {
+            return \Config::get('site.item_categories_en');
+        }
+    }
 }

@@ -14,4 +14,17 @@ return [
     // Number of images a user could upload
     'image_limit_per_user' => 5,
 
+    // Categories - 'en' locale
+    // Add new locales by copying this list and replacing '_en' in the new array key
+    // Never delete the 'en' locale, as if a list with the site's locale isn't found, this will be the default one
+    'item_categories_en' => [
+        '1' => 'Bags, purses, wallets',
+        '2' => 'Documents',
+        '3' => 'Keys',
+        '4' => 'Cars, motorcycles, bicycles',
+        '5' => 'Cellphones',
+        '6' => 'Animals',
+        '7' => 'Misc',
+    ],
+
 ];

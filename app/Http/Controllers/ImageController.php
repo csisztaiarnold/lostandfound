@@ -107,10 +107,14 @@ class ImageController extends Controller
         if(Session::get('unique_id') !== null) {
             try {
                 if (is_array($request->imageOrderArray)){
-                    foreach ($request->imageOrderArray as $key => $value) {
-                        Image::where('id', $value)->update([
-                            'image_order' => $key
-                        ]);
+                    $orderCounter = 0;
+                    foreach ($request->imageOrderArray as $imageId) {
+                        if($imageId !== null) {
+                            Image::where('id',$imageId)->update([
+                                'image_order' => $orderCounter
+                            ]);
+                            $orderCounter++;
+                        }
                     }
                     $response_array['status'] = 'success';
                 } else {
