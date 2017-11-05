@@ -16,4 +16,12 @@ class Item extends Model
         'type', 'title', 'email', 'description', 'location',
     ];
 
+    /**
+     * Get the location record associated with the item.
+     */
+    public function location()
+    {
+        return $this->belongsTo('App\Location');
+    }
+
 }

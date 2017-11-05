@@ -38,13 +38,34 @@
             {!! Form::text('title', '', ['class="form-control"', 'required']) !!}
         </div>
 
+        <script type="text/javascript">
+            google.maps.event.addDomListener(window, 'load', function () {
+                var places = new google.maps.places.Autocomplete(document.getElementById('location'));
+                google.maps.event.addListener(places, 'place_changed', function () {
+
+                    var place = places.getPlace();
+                    console.log(place);
+                    var lat = place.geometry.location.lat();
+                    var lng = place.geometry.location.lng();
+                    var iframe = '<iframe src="http://maps.google.com/maps?q=' + lat + ',' + lng + '&z=15&output=embed" width="100%" height="350" frameborder="0" style="border:0"></iframe>';
+                    $('#location_lat').val(lat);
+                    $('#location_lng').val(lng);
+                    $('#google-map-container').empty().html(iframe);
+                });
+            });
+        </script>
+
         <div class="col-xs-12 label-container">
             {!! Form::label('location', __('Where have you lost or found it?')) !!} <span class="required">*</span>
         </div>
         <div class="col-xs-12">
             {!! Form::text('location', '', ['class="form-control"', 'required']) !!}
         </div>
-        <!-- TODO: autocomplete locations from the locations table -->
+
+        {!! Form::hidden('location_lat', '', ['id="location_lat"']) !!}
+        {!! Form::hidden('location_lng', '', ['id="location_lng"']) !!}
+
+        <div id="google-map-container"></div>
 
         <div class="col-xs-12 label-container">
             {!! Form::label('description', __('Describe the item')) !!} <span class="required">*</span>

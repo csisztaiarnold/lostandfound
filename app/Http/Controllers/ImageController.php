@@ -145,9 +145,18 @@ class ImageController extends Controller
                 // Delete from the database first
                 Image::where('id', $id)->delete();
                 // Delete from the server as well
-                unlink('./item_images/'.$item->id.'/'.$image->filename.'.'.$image->extension);
-                unlink('./item_images/'.$item->id.'/'.$image->filename.'_medium.'.$image->extension);
-                unlink('./item_images/'.$item->id.'/'.$image->filename.'_thumb.'.$image->extension);
+                $mainImage = './item_images/'.$item->id.'/'.$image->filename.'.'.$image->extension;
+                if(file_exists($mainImage)) {
+                    unlink($mainImage);
+                }
+                $mediumImage = './item_images/'.$item->id.'/'.$image->filename.'.'.$image->extension;
+                if(file_exists($mediumImage)) {
+                    unlink($mediumImage);
+                }
+                $thumbImage = './item_images/'.$item->id.'/'.$image->filename.'_thumb.'.$image->extension;
+                if(file_exists($thumbImage)) {
+                    unlink($thumbImage);
+                }
                 return redirect('images/upload')->with('success', __('The image was successfully deleted!'));
             } else {
                 return redirect('images/upload')->with('error', __('You don\'t have access to this image!'));

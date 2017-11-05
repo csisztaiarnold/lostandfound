@@ -63,9 +63,9 @@
         </div>
     @endif
 
-    <div class="col-xs-12">{{ __('Drag and drop to reorder your images. The first one will be your main image.') }}</div>
     <div class="col-xs-12 sortable">
         @if($images)
+            <div class="col-xs-12">{{ __('Drag and drop to reorder your images. The first one will be your main one.') }}</div>
             @foreach($images as $image)
                 <div class="image-container" data-image-id="{{ $image->id }}"><img src="{{ URL::to('/item_images') }}/{{ $item->id }}/{{ $image->filename }}_thumb.{{ $image->extension }}" /><br /><a href="{{ URL::to('images/delete/'.$image->id) }}"><button class="btn btn-danger">{{ __('Delete image') }}</button></a></div>
             @endforeach

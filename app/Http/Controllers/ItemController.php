@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Item;
+use App\Location;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
@@ -66,9 +67,16 @@ class ItemController extends Controller
         } else {
             $uniqueId = \App\Helpers\RandomStringHelper::getToken(32);
             Session::put('unique_id', $uniqueId);
+
+            $location = new Location;
+            $location->location = $request->location;
+            $location->lat      = $request->location_lat;
+            $location->lng      = $request->location_lng;
+            $location->save();
+
             $item = new Item;
             $item->title        = $request->title;
-            $item->location     = $request->location;
+            $item->location     = $request->location; // TODO: this field is unnecessary; low priority
             $item->description  = $request->description;
             $item->email        = $request->email;
             $item->type         = $request->type;
@@ -81,6 +89,7 @@ class ItemController extends Controller
                 $item->active = 1;
             }
 
+            $item->location()->associate($location);
             $item->save();
 
             return redirect('images/upload'); // ImageController@upload
