@@ -24,4 +24,11 @@ class Item extends Model
         return $this->belongsTo('App\Location');
     }
 
+    /**
+     * Get the images associated with the item.
+     */
+    public function images()
+    {
+        return $this->hasMany('App\Image');
+    }
 }

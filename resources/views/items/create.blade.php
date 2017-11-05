@@ -47,7 +47,7 @@
                     console.log(place);
                     var lat = place.geometry.location.lat();
                     var lng = place.geometry.location.lng();
-                    var iframe = '<iframe src="http://maps.google.com/maps?q=' + lat + ',' + lng + '&z=15&output=embed" width="100%" height="350" frameborder="0" style="border:0"></iframe>';
+                    var iframe = '<iframe src="https://maps.google.com/maps?q=' + lat + ',' + lng + '&z=15&output=embed" width="100%" height="350" frameborder="0" style="border:0"></iframe>';
                     $('#location_lat').val(lat);
                     $('#location_lng').val(lng);
                     $('#google-map-container').empty().html(iframe);
