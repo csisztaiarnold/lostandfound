@@ -21,7 +21,8 @@ Route::any('items/moderate/{unique_id}/{admin_hash}', 'ItemController@moderate')
 
 // Images
 Route::any('images/upload', 'ImageController@upload');
-Route::any('images/reorder', 'ImageController@reorder');
+Route::post('images/reorder', 'ImageController@reorder');
+Route::get('images/delete/{id}', 'ImageController@delete');
 
 Route::resource('items', 'ItemController');
 

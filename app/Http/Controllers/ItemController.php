@@ -94,31 +94,35 @@ class ItemController extends Controller
      */
     public function success()
     {
-        // Is the item still in the database?
-        $item = Item::where('unique_id', Session::get('unique_id'))->first();
-        if(count($item) !== 0) {
-            $email = $item->email;
-            // Send a mail to the user
-            if($email) {
-                $itemActionsLink = \URL::to('items/edit') . '/' . $item->unique_id;
-                Mail::send('emails.item-created-success', ['itemActionsLink' => $itemActionsLink], function ($message) use ($email) {
-                    $message->from(Config::get('site.success_email_from'), __('Your editing/deleting link for a Lost and Found item'));
-                    $message->to($email);
-                });
-            }
-            // Send a moderation mail to the admin
-            if($email) {
-                $itemActionsLink = \URL::to('items/moderate').'/'.$item->unique_id.'/'.$item->admin_hash;
-                Mail::send('emails.item-created-moderation', ['itemActionsLink' => $itemActionsLink], function ($message) use ($email) {
-                    $message->from(Config::get('site.success_email_from'), __('New item submitted and awaiting moderation'));
-                    $message->to(Config::get('site.administrator_email'));
-                });
-            }
+        if(Session::get('unique_id') !== null) {
+            // Is the item still in the database?
+            $item = Item::where('unique_id', Session::get('unique_id'))->first();
+            if (count($item) !== 0) {
+                $email = $item->email;
+                // Send a mail to the user
+                if ($email) {
+                    $itemActionsLink = \URL::to('items/edit') . '/' . $item->unique_id;
+                    Mail::send('emails.item-created-success', ['itemActionsLink' => $itemActionsLink], function ($message) use ($email) {
+                        $message->from(Config::get('site.success_email_from'), __('Your editing/deleting link for a Lost and Found item'));
+                        $message->to($email);
+                    });
+                }
+                // Send a moderation mail to the admin
+                if ($email) {
+                    $itemActionsLink = \URL::to('items/moderate') . '/' . $item->unique_id . '/' . $item->admin_hash;
+                    Mail::send('emails.item-created-moderation', ['itemActionsLink' => $itemActionsLink], function ($message) use ($email) {
+                        $message->from(Config::get('site.success_email_from'), __('New item submitted and awaiting moderation'));
+                        $message->to(Config::get('site.administrator_email'));
+                    });
+                }
 
-            Session::forget('unique_id');
-            return view('items.success');
+                Session::forget('unique_id');
+                return view('items.success');
+            } else {
+                return redirect('items');
+            }
         } else {
-            return redirect('items');
+            return redirect('/');
         }
     }
 

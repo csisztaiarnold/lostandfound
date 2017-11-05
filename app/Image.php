@@ -32,4 +32,12 @@ class Image extends Model
             return false;
         }
     }
+
+    /**
+     * Get all of the posts for the user.
+     */
+    public function item()
+    {
+        return $this->belongsTo('App\Item');
+    }
 }

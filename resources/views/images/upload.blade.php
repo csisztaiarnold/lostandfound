@@ -12,6 +12,22 @@
         </div>
     @endif
 
+    @if (\Session::has('success'))
+        <div class="alert alert-success">
+            <ul>
+                <li>{!! \Session::get('success') !!}</li>
+            </ul>
+        </div>
+    @endif
+
+    @if (\Session::has('error'))
+        <div class="alert alert alert-danger">
+            <ul>
+                <li>{!! \Session::get('error') !!}</li>
+            </ul>
+        </div>
+    @endif
+
     <div class="col-xs-12">
         <div class="preview">
             {{ $item->title }}<br />
@@ -47,38 +63,42 @@
         </div>
     @endif
 
+    <div class="col-xs-12">{{ __('Drag and drop to reorder your images. The first one will be your main image.') }}</div>
     <div class="col-xs-12 sortable">
         @if($images)
             @foreach($images as $image)
-                <img src="{{ URL::to('/item_images') }}/{{ $item->id }}/{{ $image->filename }}_thumb.{{ $image->extension }}" data-image-id="{{ $image->id }}" />
+                <div class="image-container" data-image-id="{{ $image->id }}"><img src="{{ URL::to('/item_images') }}/{{ $item->id }}/{{ $image->filename }}_thumb.{{ $image->extension }}" /><br /><a href="{{ URL::to('images/delete/'.$image->id) }}"><button class="btn btn-danger">{{ __('Delete image') }}</button></a></div>
             @endforeach
         @endif
     </div>
+
     <script>
-        $(document).ready(function(){
+    $(document).ready(function(){
 
-            sortable('.sortable',{
-                items: 'img' ,
-                placeholder: '<div style="border:1px solid #888888; background-color:#f5f5f5; margin:0; padding:0; display:inline-block; width:200px; height:200px;"></div>',
-            });
-            sortable('.sortable')[0].addEventListener('sortupdate', function(e) {
-                var index;
-                var images = e.detail.newStartList;
-                var imageOrderArray = [];
-                for (index = 0; index < images.length; ++index) {
-                    imageOrderArray[index] = images[index]['dataset']['imageId'];
+        sortable('.image-container',{
+            items: '.image-container',
+        });
+
+        sortable('.sortable')[0].addEventListener('sortupdate', function(e) {
+
+            var index;
+            var images = e.detail.newStartList;
+            var imageOrderArray = [];
+            for (index = 0; index < images.length; ++index) {
+                imageOrderArray[index] = images[index]['dataset']['imageId'];
+            }
+
+            $.ajax({
+                type: "POST",
+                url: "{{ URL::to('/') }}/images/reorder",
+                data: {
+                    imageOrderArray: imageOrderArray,
+                    _token: "{{ csrf_token() }}",
                 }
-
-                $.ajax({
-                    type: "POST",
-                    url: "{{ URL::to('/') }}/images/reorder",
-                    data: {
-                        imageOrderArray: imageOrderArray,
-                        _token: "{{ csrf_token() }}",
-                    }
-                });
             });
 
         });
+
+    });
     </script>
 @endsection
