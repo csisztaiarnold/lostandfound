@@ -11,18 +11,19 @@
 |
 */
 
-Route::get('/', function () {
-    return view('index');
-});
+Route::get('/', 'MainController@index');
 
 // Items
 Route::get('items/success', 'ItemController@success');
 Route::any('items/moderate/{unique_id}/{admin_hash}', 'ItemController@moderate');
+Route::resource('items', 'ItemController');
 
 // Images
 Route::any('images/upload', 'ImageController@upload');
 Route::post('images/reorder', 'ImageController@reorder');
 Route::get('images/delete/{id}', 'ImageController@delete');
 
-Route::resource('items', 'ItemController');
+// Notifications
+Route::post('notifications/save', 'NotificationController@store');
+Route::get('notifications/success', 'NotificationController@success');
 

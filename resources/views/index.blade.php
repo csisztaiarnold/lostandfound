@@ -64,4 +64,71 @@
 
     <div id="map" style="width: 100%; height: 400px;"></div>
 
+    <h2>Get a notification when someone losts or finds and item in your area</h2>
+
+    {!! Form::open(['url' => 'notifications/save','id' => 'notifications-form']) !!}
+
+        <div class="col-xs-12 label-container">
+            {!! Form::label('location', __('Location')) !!} <span class="required">*</span>
+        </div>
+        <div class="col-xs-12">
+            {!! Form::text('location', '', ['class="form-control" id="location"']) !!}
+        </div>
+
+        <div class="col-xs-12 label-container">
+            {!! Form::label('category_id', __('Category')) !!} <span class="required">*</span>
+        </div>
+        <div class="col-xs-12">
+            {!! Form::select('category_id', $categories, null, ['class="form-control"']) !!}
+        </div>
+
+        <div class="col-xs-12 label-container">
+            {!! Form::label('email', __('Email')) !!} <span class="required">*</span>
+        </div>
+        <div class="col-xs-12">
+            {!! Form::email('email', '', ['class="form-control"']) !!}
+        </div>
+
+        <div class="col-xs-12 label-container">
+            {!! Form::label('Distance', __('Distance')) !!} <span class="required">*</span>
+        </div>
+        <div class="col-xs-12" id="slidercontainer">
+            <input type="range" min="15" max="500" value="15" step="5" class="slider" id="distance" name="distance">
+        </div>
+
+        <div id="distance-text"></div>
+
+        <div class="col-md-12 submit-button-container text-center">
+            {!! Form::submit(__('Save notification'), ['class="form-control btn btn-primary"']) !!}
+        </div>
+
+        {!! Form::hidden('location_lat', '', ['id="location_lat"']) !!}
+        {!! Form::hidden('location_lng', '', ['id="location_lng"']) !!}
+
+        {!! Form::token() !!}
+
+    {!! Form::close() !!}
+
+    <script>
+        google.maps.event.addDomListener(window, 'load', function () {
+            var places = new google.maps.places.Autocomplete(document.getElementById('location'));
+            google.maps.event.addListener(places, 'place_changed', function () {
+                var place = places.getPlace();
+                console.log(place);
+                var lat = place.geometry.location.lat();
+                var lng = place.geometry.location.lng();
+                $('#location_lat').val(lat);
+                $('#location_lng').val(lng);
+            });
+        });
+
+        var slider = document.getElementById("distance");
+        var output = document.getElementById("distance-text");
+        output.innerHTML = slider.value; // Display the default slider value
+
+        // Update the current slider value (each time you drag the slider handle)
+        slider.oninput = function() {
+            output.innerHTML = this.value;
+        }
+    </script>
 @endsection

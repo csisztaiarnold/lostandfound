@@ -52,7 +52,7 @@ class ItemController extends Controller
      * Stores the item in the database and redirects to the image upload page
      *
      * @param Request $request Form data
-     * @return \Illuminate\Routing\Redirector
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
     public function store(Request $request)
     {
@@ -166,9 +166,10 @@ class ItemController extends Controller
      * @param  int  $id
      * @return
      */
-    public function moderate($unique_id, $admin_hash)
+    public function moderate($unique_id, $admin_hash, $action)
     {
-        // TODO
+        // TODO: Send notification emails to those who requested nearby item notifications on activation
+
     }
 
     /**
