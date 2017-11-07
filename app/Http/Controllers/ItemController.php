@@ -108,20 +108,25 @@ class ItemController extends Controller
     {
         if(Session::get('unique_id') !== null) {
             // Is the item still in the database?
-            $item = Item::where('unique_id', Session::get('unique_id'))->first();
+            $item = Item::where('unique_id', Session::get('unique_id'))->with('location')->first();
             if (count($item) !== 0) {
                 $email = $item->email;
                 // Send a mail to the user
                 if ($email) {
-                    $itemActionsLink = \URL::to('items/edit') . '/' . $item->unique_id;
+                    $itemActionsLink = \URL::to('items').'/'.$item->unique_id .'/edit';
                     Mail::send('emails.item-created-success', ['itemActionsLink' => $itemActionsLink], function ($message) use ($email) {
                         $message->from(Config::get('site.success_email_from'), __('Your editing/deleting link for a Lost and Found item'));
                         $message->to($email);
                     });
+                    // If the items are not approved by an admin, send the notification emails immediately
+                    if(Config::get('site.administrator_approval') === false) {
+                        $notificationEmailArray = \App\Notification::nearbyItemNotificationRequestEmails($item->location()->first()->lat, $item->location()->first()->lng, $item->category_id);
+                        \App\Notification::sendNotificationEmails($notificationEmailArray, $item->type, $item->id, $item->title, $item->description);
+                    }
                 }
                 // Send a moderation mail to the admin
                 if ($email) {
-                    $itemActionsLink = \URL::to('items/moderate') . '/' . $item->unique_id . '/' . $item->admin_hash;
+                    $itemActionsLink = \URL::to('items/moderate').'/'.$item->unique_id.'/'.$item->admin_hash;
                     Mail::send('emails.item-created-moderation', ['itemActionsLink' => $itemActionsLink], function ($message) use ($email) {
                         $message->from(Config::get('site.success_email_from'), __('New item submitted and awaiting moderation'));
                         $message->to(Config::get('site.administrator_email'));

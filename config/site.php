@@ -11,6 +11,9 @@ return [
     // The "from" address in the emails sent to the user
     'success_email_from' => 'email@example.com',
 
+    // The "from" address in the notifiction emails sent to the user
+    'notification_email_from' => 'notification@example.com',
+
     // Number of images a user could upload
     'image_limit_per_user' => 5,
 
