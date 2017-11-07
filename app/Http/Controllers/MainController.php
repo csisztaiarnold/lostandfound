@@ -23,8 +23,10 @@ class MainController extends Controller
      */
     public function index()
     {
+        $categoryArray = \App\Item::categories();
+        $categoryArray[0] = __('All');
         return view('index')->with([
-            'categories' => array_merge(\App\Item::categories(), ['0' => __('All')]),
+            'categories' => $categoryArray,
         ]);
     }
 
