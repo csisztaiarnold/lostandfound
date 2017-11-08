@@ -25,8 +25,10 @@ class MainController extends Controller
     {
         $categoryArray = \App\Item::categories();
         $categoryArray[0] = __('All');
+        $items = \App\Item::where('active',1)->with('location')->with('images')->get();
         return view('index')->with([
             'categories' => $categoryArray,
+            'items' => $items,
         ]);
     }
 

@@ -29,7 +29,7 @@ class AdditionalFieldsInImages extends Migration
      */
     public function down()
     {
-        Schema::table('items', function($table) {
+        Schema::table('images', function($table) {
             $table->dropColumn('item_id');
             $table->dropColumn('filename');
             $table->dropColumn('extension');

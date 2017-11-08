@@ -8,7 +8,11 @@
 
 <body>
 
-{{ __('Here is your link for editing or deleting your item:') }}<br />
+@if(isset($additionalActivationMessage))
+    {{ $additionalActivationMessage }}<br /><br />
+@endif
+
+{{ __('Meanwhile, here is your link for editing or deleting your item:') }}<br />
 <br />
 <a href="{{ $itemActionsLink }}">{{ $itemActionsLink }}</a><br />
 <br />

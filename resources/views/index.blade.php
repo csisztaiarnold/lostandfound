@@ -16,7 +16,6 @@
 
                 var locations = [
                     @php
-                        $items = \App\Item::with('location')->with('images')->get();
                         $itemCount = count($items);
                     @endphp
                     @foreach($items as $item)

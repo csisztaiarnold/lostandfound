@@ -17,6 +17,7 @@ Route::get('/', 'MainController@index');
 Route::get('items/success', 'ItemController@success');
 Route::any('items/moderate/{unique_id}/{admin_hash}', 'ItemController@moderate');
 Route::resource('items', 'ItemController');
+Route::get('items/moderate/{id}/{unique_id}/{admin_hash}/{action?}', 'ItemController@moderate');
 
 // Images
 Route::any('images/upload', 'ImageController@upload');

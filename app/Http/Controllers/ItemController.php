@@ -113,12 +113,17 @@ class ItemController extends Controller
                 $email = $item->email;
                 // Send a mail to the user
                 if ($email) {
+
+                    $additionalActivationMessage = 'Your item was submitted to the site. You are ready to go!';
+                    if($item->active === 0) {
+                        $additionalActivationMessage = __('Your item is not active yet, it has to be reviewed by an admin. You will be immediately notified when your item gets activated.');
+                    }
                     $itemActionsLink = \URL::to('items').'/'.$item->unique_id .'/edit';
-                    Mail::send('emails.item-created-success', ['itemActionsLink' => $itemActionsLink], function ($message) use ($email) {
+                    Mail::send('emails.item-created-success', ['itemActionsLink' => $itemActionsLink, 'additionalActivationMessage' => $additionalActivationMessage], function ($message) use ($email) {
                         $message->from(Config::get('site.success_email_from'), __('Your editing/deleting link for a Lost and Found item'));
                         $message->to($email);
                     });
-                    // If the items are not approved by an admin, send the notification emails immediately
+                    // If the items are not required to be approved by an admin, send the notification emails immediately
                     if(Config::get('site.administrator_approval') === false) {
                         $notificationEmailArray = \App\Notification::nearbyItemNotificationRequestEmails($item->location()->first()->lat, $item->location()->first()->lng, $item->category_id);
                         \App\Notification::sendNotificationEmails($notificationEmailArray, $item->type, $item->id, $item->title, $item->description);
@@ -126,7 +131,7 @@ class ItemController extends Controller
                 }
                 // Send a moderation mail to the admin
                 if ($email) {
-                    $itemActionsLink = \URL::to('items/moderate').'/'.$item->unique_id.'/'.$item->admin_hash;
+                    $itemActionsLink = \URL::to('items/moderate').'/'.$item->id.'/'.$item->unique_id.'/'.$item->admin_hash;
                     Mail::send('emails.item-created-moderation', ['itemActionsLink' => $itemActionsLink], function ($message) use ($email) {
                         $message->from(Config::get('site.success_email_from'), __('New item submitted and awaiting moderation'));
                         $message->to(Config::get('site.administrator_email'));
@@ -171,10 +176,38 @@ class ItemController extends Controller
      * @param  int  $id
      * @return
      */
-    public function moderate($unique_id, $admin_hash, $action)
+    public function moderate($item_id = 0, $unique_id = '', $admin_hash = '', $action = '')
     {
-        // TODO: Send notification emails to those who requested nearby item notifications on activation
+        $item = Item::where('id', $item_id)->where('unique_id', $unique_id)->where('admin_hash',$admin_hash)->with('location')->with('images')->first();
 
+        if(isset($item->id)) {
+            if($action === 'activate') {
+
+                Item::where('id', $item_id)->where('unique_id', $unique_id)->where('admin_hash',$admin_hash)->update([
+                    'active' => 1,
+                ]);
+
+                // TODO: Send notification email to the item submitter if the item is activated
+
+                // TODO: Send notification emails to those who requested nearby item notifications on activation
+
+                return back()->with('success', __('The item is successfully activated'));
+            }
+
+            if($action === 'delete') {
+
+            }
+
+            return view('items.show')->with([
+                'item' => $item,
+                'action' => $action,
+                'images' => $item->images()->get(),
+                'moderation' => true,
+            ]);
+        } else {
+            // TODO: temporary error message
+            die('Unauthorized access');
+        }
     }
 
     /**
