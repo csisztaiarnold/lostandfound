@@ -1,5 +1,6 @@
 vendor/
 node_modules/
+public/item_images/
 npm-debug.log
 .idea
 
