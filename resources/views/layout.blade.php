@@ -19,29 +19,22 @@
 
     <header>
 
-        <h1>Lost and Found</h1>
-
-        <nav>
-            <ul>
-                <li><a href="{{ URL::to('/') }}" title="{{ __('Home') }}">{{ __('Home') }}</a></li>
-                <li><a href="{{ URL::to('items/') }}" title="{{ __('List items') }}">{{ __('List items') }}</a></li>
-                <li><a href="{{ URL::to('items/create') }}" title="{{ __('Add new item') }}">{{ __('Add new item') }}</a></li>
-            </ul>
-        </nav>
+        <h1><a href="{{ URL::to('/') }}" title="{{ __('Home') }}"><img src="{{ asset('img/logo-lostandfound.svg') }}" alt="Logo" class="img-responsive" /></a></h1>
 
     </header>
 
-    <main>
+</div>
 
-        @yield('main')
+<main>
 
-    </main>
+    @yield('main')
 
-    <footer>
+</main>
 
-    </footer>
+<footer>
 
-</div><!-- // Container -->
+</footer>
+
 
 </body>
 </html>

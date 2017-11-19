@@ -2,8 +2,11 @@
 
 @section('main')
 
-    <h2>{{ __('Success!') }}</h2>
+    <div class="container">
 
-    {{ __('The item was successfully saved!') }}
+        <h2>{{ __('Success!') }}</h2>
 
+        {{ __('The item was successfully saved!') }}
+
+    </div>
 @endsection
