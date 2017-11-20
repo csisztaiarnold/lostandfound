@@ -14,11 +14,11 @@ At the moment, I'm mainly working on the backend, and the frontend is a raw afte
 - Geolocating and Google Maps integration
 - Adding an item
 - Uploading images
-- Notification emails in case someone finds or losts an item in a certain distance from a location
+- Notification emails in case someone submits an item in a certain distance from a location
 
 **What's still left to do till a beta release?**
 - Moderation. As for now, it will only feature a minimal moderation method, but a more advanced administration is planned. 
 - Editing and deleting an item
 - Some commands, f.e. for deleting expired stuff
-- Frontend design
+- Frontend design - both desktop and mobile
 - Tests

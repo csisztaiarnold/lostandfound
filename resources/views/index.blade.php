@@ -1,9 +1,7 @@
 @extends('layout')
 
 @section('main')
-
     <div class="container">
-
         <div id="current-location-header">
             {{ __('Your current location is') }} <span class="exact-location"></span>
         </div>
@@ -35,10 +33,6 @@
         <script>
 
             // TODO: Needs refactoring. Low priority.
-            // TODO: Save location to a session with a session
-            $(document).ready(function(){
-
-            });
 
             // Reverse geocode for finding current location's name
             function reverseGeolocation(lat, lng)
@@ -54,27 +48,40 @@
                         }
                     }
                 });
-
             }
 
             // Tries to locate the visitor and displays the google map with all the lost and found items marked
             window.onload = function() {
                 $('#current-location-header').hide();
+                @if($location_lat_cookie && $location_lng_cookie)
+                    loadGoogleMapsWithLocations({{ $location_lat_cookie }},{{ $location_lng_cookie }},'');
+                    $('#current-location-header').show();
+                    $('#we-could-determine-your-location').hide();
+                @else
                 var startPos;
-                var geoSuccess = function(position) {
+                navigator.geolocation.getCurrentPosition(function(position) {
                     startPos = position;
-                    @if($location_lat_cookie && $location_lng_cookie)
-                        var lat = {{ $location_lat_cookie }};
-                        var lng = {{ $location_lng_cookie }};
-                    @else
-                        var lat = startPos.coords.latitude;
-                        var lng = startPos.coords.longitude;
-                    @endif
+                    console.log(position);
+                    var lat = startPos.coords.latitude;
+                    var lng = startPos.coords.longitude;
                     loadGoogleMapsWithLocations(lat,lng,'');
                     $('#current-location-header').show();
                     $('#we-could-determine-your-location').hide();
-                };
-                navigator.geolocation.getCurrentPosition(geoSuccess);
+                },
+                function (error) {
+                    // In case geolocation is disabled, try to locate the user by stored cookies
+                    if (error.code == error.PERMISSION_DENIED || error.code == error.POSITION_UNAVAILABLE || error.code == error.TIMEOUT || error.code == error.UNKNOWN_ERROR) {
+                        console.log('error');
+                        @if($location_lat_cookie && $location_lng_cookie)
+                            var lat = {{ $location_lat_cookie }};
+                            var lng = {{ $location_lng_cookie }};
+                        @endif
+                        loadGoogleMapsWithLocations(lat,lng,'');
+                        $('#current-location-header').show();
+                        $('#we-could-determine-your-location').hide();
+                    }
+                });
+                @endif
             };
 
             function loadGoogleMapsWithLocations(lat,lng,reload)
