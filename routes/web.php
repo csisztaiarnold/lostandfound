@@ -18,6 +18,7 @@ Route::get('items/success', 'ItemController@success');
 Route::any('items/moderate/{unique_id}/{admin_hash}', 'ItemController@moderate');
 Route::resource('items', 'ItemController');
 Route::get('items/moderate/{id}/{unique_id}/{admin_hash}/{action?}', 'ItemController@moderate');
+Route::post('items/list-items-on-homepage','ItemController@listItemsOnHomepage');
 
 // Images
 Route::any('images/upload', 'ImageController@upload');

@@ -46,7 +46,6 @@ class Notification extends Model
         }
     }
 
-
     /**
      * Sends a notification email about a lost/found item to the specified recipient
      *

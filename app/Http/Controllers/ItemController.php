@@ -232,4 +232,22 @@ class ItemController extends Controller
         // TODO
     }
 
+    /**
+     * List the nearby items on the home page
+     *
+     * @param Request $request Ajax post data
+     * @return
+     */
+    public function listItemsOnHomepage(Request $request)
+    {
+        $postData = $request->all();
+        if($postData) {
+            $lat = $postData['lat'];
+            $lng = $postData['lng'];
+            $nearbyItems = \App\Item::nearbyItems($lat, $lng, $distance = 30, $paginateBy = 10);
+            header('Content-type: application/json');
+            echo json_encode($nearbyItems);
+        }
+    }
+
 }

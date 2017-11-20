@@ -46,4 +46,24 @@ class Item extends Model
             return \Config::get('site.item_categories_en');
         }
     }
+
+    /**
+     * Finds all the nearby items
+     *
+     * @param int $latitude Latitude of the submitted item location
+     * @param int $longitude Longitude of the sumbitted item location
+     * @param int $distance Distance radius
+     * @return object|void
+     */
+    public static function nearbyItems($latitude = 0, $longitude = 0, $distance = 30, $paginateBy = 10)
+    {
+        $items = Item::selectRaw('*')
+            ->join('locations as l', 'l.id', '=', 'location_id')
+            ->whereRaw($distance.' > (6371 * acos(cos(radians(' . $latitude . ')) * cos(radians(`lat`)) * cos(radians(`lng`) - radians(' . $longitude . ')) + sin(radians(' . $latitude . ')) * sin(radians(`lat`)))) AND `active` = 1')
+            ->paginate($paginateBy);
+
+        if($items) {
+            return $items;
+        }
+    }
 }

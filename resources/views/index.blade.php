@@ -50,35 +50,51 @@
                 });
             }
 
+            function loadNearbyItems(lat, lng)
+            {
+                $.ajax({
+                    type: "POST",
+                    url: "{{ URL::to('/') }}/items/list-items-on-homepage",
+                    data: {
+                        lat: lat,
+                        lng: lng,
+                        _token: "{{ csrf_token() }}",
+                    },
+                    success: function(data){
+                        var itemData = jQuery.parseJSON(data);
+                        var html = '';
+                        itemData['data'].forEach(function(entry) {
+                            html += '<div class="front-page-item">';
+                            html += '<strong>' + entry['title'] + '</strong><br />';
+                            html += entry['description'];
+                            html += '</div>'
+                        });
+                        $('#latest-item-list').html(html);
+                    }
+                });
+            }
+
             // Tries to locate the visitor and displays the google map with all the lost and found items marked
             window.onload = function() {
                 $('#current-location-header').hide();
                 @if($location_lat_cookie && $location_lng_cookie)
                     loadGoogleMapsWithLocations({{ $location_lat_cookie }},{{ $location_lng_cookie }},'');
-                    $('#current-location-header').show();
-                    $('#we-could-determine-your-location').hide();
                 @else
                 var startPos;
                 navigator.geolocation.getCurrentPosition(function(position) {
                     startPos = position;
-                    console.log(position);
                     var lat = startPos.coords.latitude;
                     var lng = startPos.coords.longitude;
                     loadGoogleMapsWithLocations(lat,lng,'');
-                    $('#current-location-header').show();
-                    $('#we-could-determine-your-location').hide();
                 },
                 function (error) {
                     // In case geolocation is disabled, try to locate the user by stored cookies
                     if (error.code == error.PERMISSION_DENIED || error.code == error.POSITION_UNAVAILABLE || error.code == error.TIMEOUT || error.code == error.UNKNOWN_ERROR) {
-                        console.log('error');
                         @if($location_lat_cookie && $location_lng_cookie)
                             var lat = {{ $location_lat_cookie }};
                             var lng = {{ $location_lng_cookie }};
                         @endif
                         loadGoogleMapsWithLocations(lat,lng,'');
-                        $('#current-location-header').show();
-                        $('#we-could-determine-your-location').hide();
                     }
                 });
                 @endif
@@ -129,7 +145,11 @@
                         }
                     })(marker, i));
                 }
+
                 reverseGeolocation(lat, lng);
+                loadNearbyItems(lat,lng);
+                $('#current-location-header').show();
+                $('#we-could-determine-your-location').hide();
 
                 // Change the cookie only if reload was triggered
                 if(reload) {
@@ -159,8 +179,8 @@
         <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
 
             <h2>Latest items lost or found in your area</h2>
-            TODO
-            <!-- TODO: AJAX updated list of latest items found in the area based on the coordinates -->
+
+            <div id="latest-item-list"></div>
 
         </div>
 
@@ -236,4 +256,5 @@
         </script>
 
     </div>
+
 @endsection
