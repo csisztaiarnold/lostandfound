@@ -22,7 +22,7 @@
                         var place = places.getPlace();
                         var lat = place.geometry.location.lat();
                         var lng = place.geometry.location.lng();
-                        loadGoogleMapsWithLocations(lat,lng);
+                        loadGoogleMapsWithLocations(lat,lng,'reload');
                         reverseGeolocation(lat,lng);
                         $('#current-location-header').show();
                         $('#we-could-determine-your-location').hide();
@@ -46,14 +46,14 @@
                 var geocoder;
                 geocoder = new google.maps.Geocoder();
 
-                    var latlng = new google.maps.LatLng(lat, lng);
-                    geocoder.geocode({'latLng': latlng}, function(results, status) {
-                        if (status == google.maps.GeocoderStatus.OK) {
-                            if (results[1]) {
-                                $('.exact-location').text(results[1].formatted_address);
-                            }
+                var latlng = new google.maps.LatLng(lat, lng);
+                geocoder.geocode({'latLng': latlng}, function(results, status) {
+                    if (status == google.maps.GeocoderStatus.OK) {
+                        if (results[1]) {
+                            $('.exact-location').text(results[1].formatted_address);
                         }
-                    });
+                    }
+                });
 
             }
 
@@ -63,16 +63,21 @@
                 var startPos;
                 var geoSuccess = function(position) {
                     startPos = position;
-                    var lat = startPos.coords.latitude;
-                    var lng = startPos.coords.longitude;
-                    loadGoogleMapsWithLocations(lat, lng);
+                    @if($location_lat_cookie && $location_lng_cookie)
+                        var lat = {{ $location_lat_cookie }};
+                        var lng = {{ $location_lng_cookie }};
+                    @else
+                        var lat = startPos.coords.latitude;
+                        var lng = startPos.coords.longitude;
+                    @endif
+                    loadGoogleMapsWithLocations(lat,lng,'');
                     $('#current-location-header').show();
                     $('#we-could-determine-your-location').hide();
                 };
                 navigator.geolocation.getCurrentPosition(geoSuccess);
             };
 
-            function loadGoogleMapsWithLocations(lat, lng)
+            function loadGoogleMapsWithLocations(lat,lng,reload)
             {
                 $('#map').css('width','100%').css('height','400px');
                 var locations = [
@@ -118,6 +123,19 @@
                     })(marker, i));
                 }
                 reverseGeolocation(lat, lng);
+
+                // Change the cookie only if reload was triggered
+                if(reload) {
+                    $.ajax({
+                        type: "POST",
+                        url: "{{ URL::to('/') }}/locations/save-location-cookie",
+                        data: {
+                            lat: lat,
+                            lng: lng,
+                            _token: "{{ csrf_token() }}",
+                        }
+                    });
+                }
             }
 
         </script>
@@ -134,7 +152,7 @@
         <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
 
             <h2>Latest items lost or found in your area</h2>
-
+            TODO
             <!-- TODO: AJAX updated list of latest items found in the area based on the coordinates -->
 
         </div>

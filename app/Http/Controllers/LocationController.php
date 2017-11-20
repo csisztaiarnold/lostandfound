@@ -15,4 +15,19 @@ class LocationController extends Controller
     {
 
     }
+
+    /**
+     * Used for saving the location coordinates, it's triggered on a new location query
+     *
+     * @param Request $request Ajax post data
+     * @return void
+     */
+    public function saveLocationCookie(Request $request)
+    {
+        $postData = $request->all();
+        $lat = $postData['lat'];
+        $lng = $postData['lng'];
+        \Cookie::queue('location_lat', $lat, 525600);
+        \Cookie::queue('location_lng', $lng, 525600);
+    }
 }

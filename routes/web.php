@@ -28,3 +28,6 @@ Route::get('images/delete/{id}', 'ImageController@delete');
 Route::post('notifications/save', 'NotificationController@store');
 Route::get('notifications/success', 'NotificationController@success');
 
+// Locations
+Route::post('locations/save-location-cookie','LocationController@saveLocationCookie');
+
