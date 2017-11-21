@@ -135,7 +135,7 @@ class ItemController extends Controller
                     $itemActionsLink = \URL::to('items').'/'.$item->id;
                     // Send an activation link to each moderator
                     foreach(Config::get('site.moderator_email_array') as $moderatorEmail) {
-                        Mail::send('emails.item-created-moderation', ['itemActionsLink' => $itemActionsLink], function ($message) use ($email) {
+                        Mail::send('emails.item-created-moderation', ['itemActionsLink' => $itemActionsLink], function ($message) use ($email,$moderatorEmail) {
                             $message->subject(__('New item submitted and awaiting moderation'));
                             $message->from(Config::get('site.success_email_from'));
                             $message->to($moderatorEmail);
