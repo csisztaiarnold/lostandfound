@@ -120,7 +120,8 @@ class ItemController extends Controller
                     }
                     $itemActionsLink = \URL::to('items').'/'.$item->unique_id .'/edit';
                     Mail::send('emails.item-created-success', ['itemActionsLink' => $itemActionsLink, 'additionalActivationMessage' => $additionalActivationMessage], function ($message) use ($email) {
-                        $message->from(Config::get('site.success_email_from'), __('Your editing/deleting link for a Lost and Found item'));
+                        $message->subject(__('Your editing/deleting link for a Lost and Found item'));
+                        $message->from(Config::get('site.success_email_from'));
                         $message->to($email);
                     });
                     // If the items are not required to be approved by an admin, send the notification emails immediately
@@ -132,10 +133,14 @@ class ItemController extends Controller
                 // Send a moderation mail to the admin
                 if ($email) {
                     $itemActionsLink = \URL::to('items').'/'.$item->id;
-                    Mail::send('emails.item-created-moderation', ['itemActionsLink' => $itemActionsLink], function ($message) use ($email) {
-                        $message->from(Config::get('site.success_email_from'), __('New item submitted and awaiting moderation'));
-                        $message->to(Config::get('site.administrator_email'));
-                    });
+                    // Send an activation link to each moderator
+                    foreach(Config::get('site.moderator_email_array') as $moderatorEmail) {
+                        Mail::send('emails.item-created-moderation', ['itemActionsLink' => $itemActionsLink], function ($message) use ($email) {
+                            $message->subject(__('New item submitted and awaiting moderation'));
+                            $message->from(Config::get('site.success_email_from'));
+                            $message->to($moderatorEmail);
+                        });
+                    }
                 }
 
                 Session::forget('unique_id');
