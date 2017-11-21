@@ -36,7 +36,7 @@ class Notification extends Model
         $notificationArray = [];
         if(count($notifications) > 0) {
             foreach($notifications as $notification) {
-                if($notification->category_id === 0) {
+                if($notification->category_id === 0 || $notification->category_id === '0') {
                     $notificationArray[] = $notification->email;
                 } elseif ($notification->category_id === $category) {
                     $notificationArray[] = $notification->email;
