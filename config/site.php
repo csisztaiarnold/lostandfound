@@ -2,9 +2,13 @@
 
 return [
 
+    // Only users with these emails could moderate items (put them in your .env file, and separate with comma)
+    'moderator_email_array' => explode(',',env('MODERATOR_EMAILS')),
+
     // No items go public until the administrator approves it
     'administrator_approval' => true,
 
+    // TODO: This should be the same as the moderator_email_array, refactor it ASAP
     // Moderation email address (the address of the administrator who approves items)
     'administrator_email' => 'administrator@example.com',
 

@@ -65,11 +65,11 @@
                         var html = '';
                         itemData['data'].forEach(function(entry) {
                             html += '<div class="front-page-item">';
-                            html += '<strong>' + entry['title'] + '</strong><br />';
+                            html += '<strong><a href="{{ URL::to('items') }}/' + entry['id'] + '" title="' + entry['title'] + '">' + entry['title'] + '</a></strong><br />';
                             html += entry['description'];
                             html += '</div>'
                         });
-                        $('#latest-item-list').html(html);
+                        $('#latest-item-list').hide().html(html).fadeIn('slow');
                     }
                 });
             }
@@ -117,7 +117,7 @@
                                 $imageHtml = '<img src="'.URL::to('/item_images').'/'.$item->id.'/'.$filename.'.'.$extension.'" width="100" style="float:left; margin-right:10px">';
                             }
                         @endphp
-                    ['<div style="width:280px"><a href="{{ URL::to('items/show').'/'.$item->id }}">{!! $imageHtml !!}</a> <strong>{{ ($item->type == 'lost') ? __('😪 Lost!') : __('😊 Found!') }}<br /><br /> <a href="{{ URL::to('items/show').'/'.$item->id }}">{{ $item->title }}</a></strong> <br /> {{ $item->location()->first()->location }}</div> <div style="width:280px; clear:both; border-top:1px solid #ddd; margin-top:10px; padding-top:5px">{{ \str_limit($item->description,150,'...') }} <br /><br /> <a href="{{ URL::to('items/show').'/'.$item->id }}">{{ __('More...') }}</a></div></div>', {{ $item->location()->first()->lat }}, {{ $item->location()->first()->lng }}, {{ $itemCount }}],
+                    ['<div style="width:280px"><a href="{{ URL::to('items').'/'.$item->id }}">{!! $imageHtml !!}</a> <strong>{{ ($item->type == 'lost') ? __('😪 Lost!') : __('😊 Found!') }}<br /><br /> <a href="{{ URL::to('items').'/'.$item->id }}">{{ $item->title }}</a></strong> <br /> {{ $item->location()->first()->location }}</div> <div style="width:280px; clear:both; border-top:1px solid #ddd; margin-top:10px; padding-top:5px">{{ \str_limit($item->description,150,'...') }} <br /><br /> <a href="{{ URL::to('items').'/'.$item->id }}">{{ __('More...') }}</a></div></div>', {{ $item->location()->first()->lat }}, {{ $item->location()->first()->lng }}, {{ $itemCount }}],
                     @php($itemCount--)
                     @endforeach
                 ];
@@ -212,10 +212,10 @@
                 </div>
 
                 <div class="col-xs-12 label-container">
-                    {!! Form::label('Distance', __('Distance')) !!} <span class="required">*</span>
+                    {!! Form::label('distance', __('Distance in KM')) !!} <span class="required">*</span>
                 </div>
                 <div class="col-xs-12" id="slidercontainer">
-                    <input type="range" min="15" max="500" value="15" step="5" class="slider" id="distance" name="distance">
+                    <input type="range" min="0.5" max="300" value="5" step="0.5" class="slider" id="distance" name="distance">
                 </div>
 
                 <div id="distance-text"></div>

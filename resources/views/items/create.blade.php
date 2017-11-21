@@ -66,6 +66,7 @@
 
             <div class="col-xs-12 label-container">
                 {!! Form::label('location', __('Where have you lost or found it?')) !!} <span class="required">*</span>
+                <div class="small">{{ __('Don\'t limit yourself to a city or area. To increase the chance of your success, you could enter exact places (f.e. an address or an explicit place)') }}</div>
             </div>
             <div class="col-xs-12">
                 {!! Form::text('location', '', ['class="form-control"', 'required']) !!}

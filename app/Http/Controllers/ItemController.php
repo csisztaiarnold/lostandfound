@@ -131,7 +131,7 @@ class ItemController extends Controller
                 }
                 // Send a moderation mail to the admin
                 if ($email) {
-                    $itemActionsLink = \URL::to('items/moderate').'/'.$item->id.'/'.$item->unique_id.'/'.$item->admin_hash;
+                    $itemActionsLink = \URL::to('items').'/'.$item->id;
                     Mail::send('emails.item-created-moderation', ['itemActionsLink' => $itemActionsLink], function ($message) use ($email) {
                         $message->from(Config::get('site.success_email_from'), __('New item submitted and awaiting moderation'));
                         $message->to(Config::get('site.administrator_email'));
@@ -151,12 +151,56 @@ class ItemController extends Controller
     /**
      * Display the item
      *
-     * @param  int  $id
+     * @param int $id The item's ID
+     * @param string $action Moderator action
      * @return
      */
-    public function show($id)
+    public function show($id = 0, $action = '')
     {
-        // TODO
+        // Is a moderator logged in?
+        if(\Auth::id() && (in_array(\Auth::user()->email,Config::get('site.moderator_email_array')))){
+            $item = Item::where('id', $id)->first();
+            if($action === 'activate') {
+                // TODO: Add activation_date field to the table. Low priority.
+                Item::where('id', $id)->update([
+                    'active' => 1,
+                ]);
+                // Send notification email to the item submitter if the item is activated
+                $notificationEmailArray = \App\Notification::nearbyItemNotificationRequestEmails($item->location()->first()->lat, $item->location()->first()->lng, $item->category_id);
+                \App\Notification::sendNotificationEmails($notificationEmailArray, $item->type, $item->id, $item->title, $item->description);
+                return back()->with('success', __('The item is successfully activated'));
+            } elseif($action === 'deactivate') {
+                Item::where('id', $id)->update([
+                    'active' => 0,
+                ]);
+                // TODO: Send notification email to the item submitter if the item is deactivated
+                // TODO: Send possible reason too? Low priority.
+                return back()->with('success', __('The item is successfully deactivated'));
+            } elseif($action === 'delete') {
+                Item::where('id', $id)->delete();
+                // TODO: Hard delete ATM, change it to soft delete
+                // TODO: Confirmation dialog on the frontend side
+                // TODO: Send notification email to the item submitter if the item is deleted manually
+                // TODO: Send possible reason too? Low priority.
+                return back()->with('success', __('The item is successfully deleted'));
+            }
+
+            $loggedInModerator = true;
+        } else {
+            $item = Item::where('id', $id)->where('active', 1)->first();
+            $loggedInModerator = false;
+        }
+
+        $images = [];
+        if(count($item) > 0) {
+            $images = $item->images()->get();
+        }
+
+        return view('items.show')->with([
+            'item' => $item,
+            'images' => $images,
+            'moderation' => $loggedInModerator,
+        ]);
     }
 
     /**
@@ -168,46 +212,6 @@ class ItemController extends Controller
     public function edit($id)
     {
         // TODO
-    }
-
-    /**
-     * Moderate the item
-     *
-     * @param  int  $id
-     * @return
-     */
-    public function moderate($item_id = 0, $unique_id = '', $admin_hash = '', $action = '')
-    {
-        $item = Item::where('id', $item_id)->where('unique_id', $unique_id)->where('admin_hash',$admin_hash)->with('location')->with('images')->first();
-
-        if(isset($item->id)) {
-            if($action === 'activate') {
-
-                Item::where('id', $item_id)->where('unique_id', $unique_id)->where('admin_hash',$admin_hash)->update([
-                    'active' => 1,
-                ]);
-
-                // TODO: Send notification email to the item submitter if the item is activated
-
-                // TODO: Send notification emails to those who requested nearby item notifications on activation
-
-                return back()->with('success', __('The item is successfully activated'));
-            }
-
-            if($action === 'delete') {
-
-            }
-
-            return view('items.show')->with([
-                'item' => $item,
-                'action' => $action,
-                'images' => $item->images()->get(),
-                'moderation' => true,
-            ]);
-        } else {
-            // TODO: temporary error message
-            die('Unauthorized access');
-        }
     }
 
     /**

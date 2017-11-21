@@ -15,10 +15,9 @@ Route::get('/', 'MainController@index');
 
 // Items
 Route::get('items/success', 'ItemController@success');
-Route::any('items/moderate/{unique_id}/{admin_hash}', 'ItemController@moderate');
 Route::resource('items', 'ItemController');
-Route::get('items/moderate/{id}/{unique_id}/{admin_hash}/{action?}', 'ItemController@moderate');
 Route::post('items/list-items-on-homepage','ItemController@listItemsOnHomepage');
+Route::get('items/{id}/{action?}', 'ItemController@show');
 
 // Images
 Route::any('images/upload', 'ImageController@upload');
@@ -32,3 +31,7 @@ Route::get('notifications/success', 'NotificationController@success');
 // Locations
 Route::post('locations/save-location-cookie','LocationController@saveLocationCookie');
 
+
+Auth::routes();
+
+Route::get('/home', 'HomeController@index')->name('home');

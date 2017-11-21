@@ -60,6 +60,7 @@ class Item extends Model
         $items = Item::selectRaw('*')
             ->join('locations as l', 'l.id', '=', 'location_id')
             ->whereRaw($distance.' > (6371 * acos(cos(radians(' . $latitude . ')) * cos(radians(`lat`)) * cos(radians(`lng`) - radians(' . $longitude . ')) + sin(radians(' . $latitude . ')) * sin(radians(`lat`)))) AND `active` = 1')
+            ->orderBy('created_at','desc')
             ->paginate($paginateBy);
 
         if($items) {

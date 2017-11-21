@@ -5,7 +5,9 @@ A Laravel based site to help people find their lost items :)
 
 Up-to-date preview: https://lostandfound.idevele.com
 
-Basically, Lost&Found will be a service which will help people who lost (or something was stolen from them) or found something in a given area. It is not limited to a certain location, so it can be easily used internationally.
+Basically, Lost&Found will be a service which will help people who lost (or something was stolen from them) or found something in a given area. It is not limited to a certain location, so it can be easily used globally.
+
+Let's think big for a bit: it would be also useful as a complementary assistance for airports, bus- or railway stations, taxi companies, subways, malls, stadiums, restaurants, nightclubs, theatres, spas, beaches, etc... Any place which has a physical lost&found service. The place's management could set up a notification email, and whenever an item is lost in their area, they would be alerted.
 
 At the moment, I'm mainly working on the backend, and the frontend is a raw afterthought. It will be refactored and polished once I finish most of the work in the backend.
 
@@ -22,3 +24,6 @@ At the moment, I'm mainly working on the backend, and the frontend is a raw afte
 - Some commands, f.e. for deleting expired stuff
 - Frontend design - both desktop and mobile
 - Tests
+
+**Long-term plans**
+- API
