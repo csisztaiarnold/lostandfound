@@ -29,7 +29,7 @@
         @if($moderation === true)
             <div class="col-xs-12">
                 <a href="{{ URL::to('items/'.$item->id.'/delete') }}"><button class="btn btn-danger">{{ __('Delete item') }}</button></a>
-                @if($item->active === 1)
+                @if($item->active === 1 || $item->active === '1')
                     <a href="{{ URL::to('items/'.$item->id.'/deactivate') }}"><button class="btn btn-danger">{{ __('Dectivate item') }}</button></a>
                 @else
                     <a href="{{ URL::to('items/'.$item->id.'/activate') }}"><button class="btn btn-danger">{{ __('Activate item') }}</button></a>@endif
