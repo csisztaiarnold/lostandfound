@@ -12,6 +12,7 @@
     <script src="{{ asset('js/bootstrap.min.js') }}"></script>
     <script src="{{ asset('js/sortable/html.sortable.min.js') }}"></script>
     <script src="https://maps.googleapis.com/maps/api/js?key={{ env('GOOGLE_MAPS_API_KEY') }}&libraries=places"></script>
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700&amp;subset=latin-ext" rel="stylesheet">
 </head>
 <body>
 

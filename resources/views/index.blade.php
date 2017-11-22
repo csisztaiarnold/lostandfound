@@ -52,6 +52,7 @@
 
             function loadNearbyItems(lat, lng)
             {
+                $('#ajax-loader-anim').show();
                 $.ajax({
                     type: "POST",
                     url: "{{ URL::to('/') }}/items/list-items-on-homepage",
@@ -63,12 +64,17 @@
                     success: function(data){
                         var itemData = jQuery.parseJSON(data);
                         var html = '';
-                        itemData['data'].forEach(function(entry) {
-                            html += '<div class="front-page-item">';
-                            html += '<strong><a href="{{ URL::to('items') }}/' + entry['id'] + '" title="' + entry['title'] + '">' + entry['title'] + '</a></strong><br />';
-                            html += entry['description'];
-                            html += '</div>'
-                        });
+                        if(itemData['data'].length === 0) {
+                            html = '{{ __('No items nearby...') }}';
+                        } else {
+                            itemData['data'].forEach(function(entry) {
+                                html += '<article>';
+                                html += '<a href="{{ URL::to('items') }}/' + entry['id'] + '" title="' + entry['title'] + '">' + entry['title'] + '</a>';
+                                html += entry['description'];
+                                html += '</article>'
+                            });
+                        }
+                        $('#ajax-loader-anim').hide();
                         $('#latest-item-list').hide().html(html).fadeIn('slow');
                     }
                 });
@@ -176,11 +182,11 @@
 
     <div class="container">
 
-        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 latest-items">
 
             <h2>Latest items lost or found in your area</h2>
 
-            <div id="latest-item-list"></div>
+            <div id="latest-item-list"><img src="{{ asset('img/ajax-loader.gif') }}" alt="Loading animation" id="ajax-loader-anim" /></div>
 
         </div>
 

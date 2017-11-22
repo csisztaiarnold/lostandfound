@@ -1,5 +1,6 @@
 body {
   padding-bottom: 20px;
+  font-family: 'Open Sans', sans-serif;
 }
 
 header {
@@ -15,14 +16,20 @@ header {
 
 }
 
+#ajax-loader-anim {
+  display:none;
+}
+
 #new-item-link {
   text-align: center;
   background-color: #f48478;
-  padding: 8px 0 8px 0;
 
   a {
+    padding: 8px 0 8px 0;
     font-size: 20px;
-    color:#fff;
+    color: #fff;
+    display: inline-block;
+    font-weight: 300;
 
     &:hover {
       text-decoration: none;
@@ -43,14 +50,37 @@ header {
 }
 
 #current-location-header, #we-could-determine-your-location {
-  font-size: 22px;
+  font-size: 26px;
   color: #666666;
   text-align: center;
+  font-weight: 300;
 
   .exact-location {
-    color: #333333;
+    color: #cb0a0a;
   }
 
+}
+
+.latest-items {
+  h2 {
+    font-size: 30px;
+    font-weight: 300;
+    padding-bottom: 10px;
+  }
+
+  article {
+    font-size: 16px;
+    padding: 0 10px 10px 10px;
+    border-bottom: 1px solid #DDDDDD;
+    margin-bottom: 10px;
+
+    a {
+      color: #cb0a0a;
+      display: block;
+      padding-bottom: 5px;
+      font-size: 18px;
+    }
+  }
 }
 
 .location-input-container {
@@ -58,7 +88,30 @@ header {
   padding-bottom: 25px;
   padding-top: 15px;
 
+  ::-webkit-input-placeholder {
+    color:    #aaa;
+  }
+  :-moz-placeholder {
+    color:    #aaa;
+    opacity:  1;
+  }
+  ::-moz-placeholder {
+    color:    #aaa;
+    opacity:  1;
+  }
+  :-ms-input-placeholder {
+    color:    #aaa;
+  }
+  ::-ms-input-placeholder {
+    color:    #aaa;
+  }
+
+  ::placeholder {
+    color:    #aaa;
+  }
+
   .location-input {
+    font-weight: 300;
     font-size: 20px;
     text-align: center;
     padding: 8px 0 8px 0 !important;
