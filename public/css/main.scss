@@ -81,7 +81,8 @@ header {
     padding: 0 2px 20px 2px;
     border-bottom: 1px solid #DDDDDD;
     margin-bottom: 15px;
-
+    overflow: auto;
+    
     .location {
       font-size: 13px;
       color: #888888;

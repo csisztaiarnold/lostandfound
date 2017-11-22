@@ -75,10 +75,10 @@
 
                                 var image = '';
                                 if(entry['filename']) {
-                                    image = '<img src="{{ URL::to('item_images') }}/' + entry['id'] + '/' + entry['filename'] + '_thumb.' + entry['extension'] + '" alt="' + entry['title'] + '" class="item-image" width="100" />';
+                                    image = '<img src="{{ URL::to('item_images') }}/' + entry['item_id'] + '/' + entry['filename'] + '_thumb.' + entry['extension'] + '" alt="' + entry['title'] + '" class="item-image" width="100" />';
                                 }
                                 html += '<article>';
-                                html += '<strong>' + type + '</strong>: <a href="{{ URL::to('items') }}/' + entry['id'] + '" title="' + entry['title'] + '">' + entry['title'] + '</a><br />';
+                                html += '<strong>' + type + '</strong>: <a href="{{ URL::to('items') }}/' + entry['item_id'] + '" title="' + entry['title'] + '">' + entry['title'] + '</a><br />';
                                 html += '<div class="location">' + entry['location'] + '</div>';
                                 html +=  '<div class="description">' + image + entry['description'] + '</div>';
                                 html += '</article>'
