@@ -68,9 +68,19 @@
                             html = '{{ __('No items nearby...') }}';
                         } else {
                             itemData['data'].forEach(function(entry) {
+                                var type = '{{ __('Lost') }}';
+                                if(entry['type'] === 'found') {
+                                    type = '{{ __('Found') }}';
+                                }
+
+                                var image = '';
+                                if(entry['filename']) {
+                                    image = '<img src="{{ URL::to('item_images') }}/' + entry['id'] + '/' + entry['filename'] + '_thumb.' + entry['extension'] + '" alt="' + entry['title'] + '" class="item-image" width="100" />';
+                                }
                                 html += '<article>';
-                                html += '<a href="{{ URL::to('items') }}/' + entry['id'] + '" title="' + entry['title'] + '">' + entry['title'] + '</a>';
-                                html += entry['description'];
+                                html += '<strong>' + type + '</strong>: <a href="{{ URL::to('items') }}/' + entry['id'] + '" title="' + entry['title'] + '">' + entry['title'] + '</a><br />';
+                                html += '<div class="location">' + entry['location'] + '</div>';
+                                html +=  '<div class="description">' + image + entry['description'] + '</div>';
                                 html += '</article>'
                             });
                         }
@@ -184,15 +194,17 @@
 
         <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 latest-items">
 
-            <h2>Latest items lost or found in your area</h2>
+            <h2>Latest items</h2>
+            <div class="subtitle">These are the latest lost or found items in your area.</div>
 
             <div id="latest-item-list"><img src="{{ asset('img/ajax-loader.gif') }}" alt="Loading animation" id="ajax-loader-anim" /></div>
 
         </div>
 
-        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 notification-form">
 
-            <h2>Get a notification when someone losts or finds and item in your area</h2>
+            <h2>Notifications in your mailbox!</h2>
+            <div class="subtitle">You will be immediately notified when someone losts or finds and item in your area.</div>
 
             {!! Form::open(['url' => 'notifications/save','id' => 'notifications-form']) !!}
 

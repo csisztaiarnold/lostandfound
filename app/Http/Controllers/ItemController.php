@@ -184,6 +184,7 @@ class ItemController extends Controller
             } elseif($action === 'delete') {
                 Item::where('id', $id)->delete();
                 // TODO: Hard delete ATM, change it to soft delete
+                // TODO: Related images and locations should be deleted as well
                 // TODO: Confirmation dialog on the frontend side
                 // TODO: Send notification email to the item submitter if the item is deleted manually
                 // TODO: Send possible reason too? Low priority.
