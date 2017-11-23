@@ -30,7 +30,7 @@ Route::get('notifications/success', 'NotificationController@success');
 
 // Locations
 Route::post('locations/save-location-cookie','LocationController@saveLocationCookie');
-
+Route::get('location/{lat}/{lng}','LocationController@setLocationCookieFromUrl');
 
 Auth::routes();
 

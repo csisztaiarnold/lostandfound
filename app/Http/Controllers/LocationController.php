@@ -30,4 +30,20 @@ class LocationController extends Controller
         \Cookie::queue('location_lat', $lat, 525600);
         \Cookie::queue('location_lng', $lng, 525600);
     }
+
+
+    /**
+     * Sets the location cookie from URL parameters and redirects to the homepage
+     *
+     * @param string $lat Latitude
+     * @param string $lng Longitude
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function setLocationCookieFromUrl($lat, $lng) {
+        if($lat && $lng) {
+            \Cookie::queue('location_lat', $lat, 525600);
+            \Cookie::queue('location_lng', $lng, 525600);
+        }
+        return redirect('/');
+    }
 }

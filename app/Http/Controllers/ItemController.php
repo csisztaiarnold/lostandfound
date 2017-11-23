@@ -102,7 +102,7 @@ class ItemController extends Controller
     /**
      * Finishing the submission, sending an email, displaying a success page
      *
-     * @return \Illuminate\View\View
+     * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse
      */
     public function success()
     {
