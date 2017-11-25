@@ -200,12 +200,14 @@ class ItemController extends Controller
         $images = [];
         if(count($item) > 0) {
             $images = $item->images()->get();
+            $location = $item->location()->get()->first();
         }
 
         return view('items.show')->with([
             'item' => $item,
             'images' => $images,
             'moderation' => $loggedInModerator,
+            'location' => $location,
         ]);
     }
 

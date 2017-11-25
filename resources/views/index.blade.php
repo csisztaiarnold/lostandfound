@@ -62,7 +62,7 @@
                         _token: "{{ csrf_token() }}",
                     },
                     success: function(data){
-                        var itemData = jQuery.parseJSON(data);
+                        var itemData = jQuery.parseJSON(JSON.stringify(data));
                         var html = '';
                         if(itemData['data'].length === 0) {
                             html = '{{ __('No items nearby...') }}';
@@ -74,13 +74,20 @@
                                 }
 
                                 var image = '';
+                                var description = entry['description'];
+                                var descriptionLength = 300;
+                                if(description.length > descriptionLength){
+                                    description = description.substring(0, descriptionLength - 3) + "...";
+                                } else {
+                                    description.substring(0, descriptionLength);
+                                }
                                 if(entry['filename']) {
                                     image = '<img src="{{ URL::to('item_images') }}/' + entry['item_id'] + '/' + entry['filename'] + '_thumb.' + entry['extension'] + '" alt="' + entry['title'] + '" class="item-image" width="100" />';
                                 }
                                 html += '<article>';
                                 html += '<strong>' + type + '</strong>: <a href="{{ URL::to('items') }}/' + entry['item_id'] + '" title="' + entry['title'] + '">' + entry['title'] + '</a><br />';
                                 html += '<div class="location">' + entry['location'] + '</div>';
-                                html +=  '<div class="description">' + image + entry['description'] + '</div>';
+                                html +=  '<div class="description">' + image + description + ' <a href="{{ URL::to('items') }}/' + entry['item_id'] + '" title="' + entry['title'] + '">{{ __('More') }} &raquo;</a></div>';
                                 html += '</article>'
                             });
                         }
@@ -132,8 +139,9 @@
                                 $extension = $mainImage->extension;
                                 $imageHtml = '<img src="'.URL::to('/item_images').'/'.$item->id.'/'.$filename.'.'.$extension.'" width="100" style="float:left; margin-right:10px">';
                             }
+                            $description = trim(preg_replace('/\s\s+/', ' ', $item->description));
                         @endphp
-                    ['<div style="width:280px"><a href="{{ URL::to('items').'/'.$item->id }}">{!! $imageHtml !!}</a> <strong>{{ ($item->type == 'lost') ? __('😪 Lost!') : __('😊 Found!') }}<br /><br /> <a href="{{ URL::to('items').'/'.$item->id }}">{{ $item->title }}</a></strong> <br /> {{ $item->location()->first()->location }}</div> <div style="width:280px; clear:both; border-top:1px solid #ddd; margin-top:10px; padding-top:5px">{{ \str_limit($item->description,150,'...') }} <br /><br /> <a href="{{ URL::to('items').'/'.$item->id }}">{{ __('More...') }}</a></div></div>', {{ $item->location()->first()->lat }}, {{ $item->location()->first()->lng }}, {{ $itemCount }}],
+                    ['<div style="width:280px"><a href="{{ URL::to('items').'/'.$item->id }}">{!! $imageHtml !!}</a> <strong>{{ ($item->type == 'lost') ? __('😪 Lost!') : __('😊 Found!') }}<br /><br /> <a href="{{ URL::to('items').'/'.$item->id }}">{{ $item->title }}</a></strong> <br /> {{ $item->location()->first()->location }}</div> <div style="width:280px; clear:both; border-top:1px solid #ddd; margin-top:10px; padding-top:5px">{{ \str_limit($description,150,'...') }} <br /><br /> <a href="{{ URL::to('items').'/'.$item->id }}">{{ __('More...') }}</a></div></div>', {{ $item->location()->first()->lat }}, {{ $item->location()->first()->lng }}, {{ $itemCount }}],
                     @php($itemCount--)
                     @endforeach
                 ];
@@ -194,7 +202,7 @@
 
         <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 latest-items">
 
-            <h2>Latest items</h2>
+            <h2>Latest additions</h2>
             <div class="subtitle">These are the latest lost or found items in your area.</div>
 
             <div id="latest-item-list"><img src="{{ asset('img/ajax-loader.gif') }}" alt="Loading animation" id="ajax-loader-anim" /></div>
@@ -204,7 +212,7 @@
         <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 notification-form">
 
             <h2>Notifications in your mailbox!</h2>
-            <div class="subtitle">You will be immediately notified when someone losts or finds and item in your area.</div>
+            <div class="subtitle">Get notified when someone losts or finds and item in your area.</div>
 
             {!! Form::open(['url' => 'notifications/save','id' => 'notifications-form']) !!}
 
