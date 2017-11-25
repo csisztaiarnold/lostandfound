@@ -62,7 +62,11 @@
                         _token: "{{ csrf_token() }}",
                     },
                     success: function(data){
-                        var itemData = jQuery.parseJSON(JSON.stringify(data));
+                        var jsonData = data;
+                        if(typeof data !== 'string') {
+                            jsonData = JSON.stringify(data);
+                        }
+                        var itemData = jQuery.parseJSON(jsonData);
                         var html = '';
                         if(itemData['data'].length === 0) {
                             html = '{{ __('No items nearby...') }}';
