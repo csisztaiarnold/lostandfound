@@ -26,7 +26,7 @@
         </h2>
 
         <div class="location">
-            {{ $item->location }}
+            <a href="{{ URL::to('location') }}/{{ $location->lat }}/{{ $location->lng }}" title="{{ $item->location }}">{{ $item->location }}</a>
         </div>
 
         <div class="description">
