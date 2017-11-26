@@ -27,8 +27,10 @@ class LocationController extends Controller
         $postData = $request->all();
         $lat = $postData['lat'];
         $lng = $postData['lng'];
+        $locationName = $postData['name'];
         \Cookie::queue('location_lat', $lat, 525600);
         \Cookie::queue('location_lng', $lng, 525600);
+        \Cookie::queue('location_name', $locationName, 525600);
     }
 
 

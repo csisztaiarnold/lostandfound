@@ -20,7 +20,7 @@
                         var place = places.getPlace();
                         var lat = place.geometry.location.lat();
                         var lng = place.geometry.location.lng();
-                        loadGoogleMapsWithLocations(lat,lng,'reload');
+                        loadGoogleMapsWithLocations(lat,lng);
                         reverseGeolocation(lat,lng);
                         $('#current-location-header').show();
                         $('#we-could-determine-your-location').hide();
@@ -45,6 +45,16 @@
                     if (status == google.maps.GeocoderStatus.OK) {
                         if (results[1]) {
                             $('.exact-location').text(results[1].formatted_address);
+                            $.ajax({
+                                type: "POST",
+                                url: "{{ URL::to('/') }}/locations/save-location-cookie",
+                                data: {
+                                    lat: lat,
+                                    lng: lng,
+                                    name: results[1].formatted_address,
+                                    _token: "{{ csrf_token() }}",
+                                }
+                            });
                         }
                     }
                 });
@@ -85,11 +95,12 @@
                                 } else {
                                     description.substring(0, descriptionLength);
                                 }
+                                var url = '{{ URL::to('items') }}/' + entry['item_id'];
                                 if(entry['filename']) {
-                                    image = '<img src="{{ URL::to('item_images') }}/' + entry['item_id'] + '/' + entry['filename'] + '_thumb.' + entry['extension'] + '" alt="' + entry['title'] + '" class="item-image" width="100" />';
+                                    image = '<a href="' + url + '" title="' + entry['title'] + '"><img src="{{ URL::to('item_images') }}/' + entry['item_id'] + '/' + entry['filename'] + '_thumb.' + entry['extension'] + '" alt="' + entry['title'] + '" class="item-image" width="100" /></a>';
                                 }
                                 html += '<article>';
-                                html += '<strong>' + type + '</strong>: <a href="{{ URL::to('items') }}/' + entry['item_id'] + '" title="' + entry['title'] + '">' + entry['title'] + '</a><br />';
+                                html += '<h1><strong>' + type + '</strong>: <a href="' + url + '" title="' + entry['title'] + '">' + entry['title'] + '</a></h1>';
                                 html += '<div class="location">' + entry['location'] + '</div>';
                                 html +=  '<div class="description">' + image + description + ' <a href="{{ URL::to('items') }}/' + entry['item_id'] + '" title="' + entry['title'] + '">{{ __('More') }} &raquo;</a></div>';
                                 html += '</article>'
@@ -112,7 +123,7 @@
                     startPos = position;
                     var lat = startPos.coords.latitude;
                     var lng = startPos.coords.longitude;
-                    loadGoogleMapsWithLocations(lat,lng,'');
+                    loadGoogleMapsWithLocations(lat,lng);
                 },
                 function (error) {
                     // In case geolocation is disabled, try to locate the user by stored cookies
@@ -121,13 +132,13 @@
                             var lat = {{ $location_lat_cookie }};
                             var lng = {{ $location_lng_cookie }};
                         @endif
-                        loadGoogleMapsWithLocations(lat,lng,'');
+                        loadGoogleMapsWithLocations(lat,lng);
                     }
                 });
                 @endif
             };
 
-            function loadGoogleMapsWithLocations(lat,lng,reload)
+            function loadGoogleMapsWithLocations(lat,lng)
             {
                 $('#map').css('width','100%').css('height','400px');
                 var locations = [
@@ -141,7 +152,7 @@
                             if(isset($mainImage)) {
                                 $filename = $mainImage->filename;
                                 $extension = $mainImage->extension;
-                                $imageHtml = '<img src="'.URL::to('/item_images').'/'.$item->id.'/'.$filename.'.'.$extension.'" width="100" style="float:left; margin-right:10px">';
+                                $imageHtml = '<img src="'.URL::to('/item_images').'/'.$item->id.'/'.$filename.'.'.$extension.'" width="100" style="float:left; margin-right:10px" />';
                             }
                             $description = trim(preg_replace('/\s\s+/', ' ', $item->description));
                         @endphp
@@ -179,18 +190,6 @@
                 $('#current-location-header').show();
                 $('#we-could-determine-your-location').hide();
 
-                // Change the cookie only if reload was triggered
-                if(reload) {
-                    $.ajax({
-                        type: "POST",
-                        url: "{{ URL::to('/') }}/locations/save-location-cookie",
-                        data: {
-                            lat: lat,
-                            lng: lng,
-                            _token: "{{ csrf_token() }}",
-                        }
-                    });
-                }
             }
 
         </script>
@@ -220,37 +219,37 @@
 
             {!! Form::open(['url' => 'notifications/save','id' => 'notifications-form']) !!}
 
-                <div class="col-xs-12 label-container">
+                <div class="label-container">
                     {!! Form::label('location', __('Location')) !!} <span class="required">*</span>
                 </div>
-                <div class="col-xs-12">
-                    {!! Form::text('location', '', ['class="form-control" id="location"']) !!}
+                <div>
+                    {!! Form::text('location', '', ['class="form-control" id="location"', 'required']) !!}
                 </div>
 
-                <div class="col-xs-12 label-container">
+                <div class="label-container">
                     {!! Form::label('category_id', __('Category')) !!} <span class="required">*</span>
                 </div>
-                <div class="col-xs-12">
-                    {!! Form::select('category_id', $categories, null, ['class="form-control"']) !!}
+                <div>
+                    {!! Form::select('category_id', $categories, null, ['class="form-control"', 'required']) !!}
                 </div>
 
-                <div class="col-xs-12 label-container">
+                <div class="label-container">
                     {!! Form::label('email', __('Email')) !!} <span class="required">*</span>
                 </div>
-                <div class="col-xs-12">
-                    {!! Form::email('email', '', ['class="form-control"']) !!}
+                <div>
+                    {!! Form::email('email', '', ['class="form-control"', 'required']) !!}
                 </div>
 
-                <div class="col-xs-12 label-container">
-                    {!! Form::label('distance', __('Distance in KM')) !!} <span class="required">*</span>
+                <div class="label-container">
+                    {!! Form::label('distance', __('Distance from your location')) !!} <span class="required">*</span>
                 </div>
-                <div class="col-xs-12" id="slidercontainer">
-                    <input type="range" min="0.5" max="300" value="5" step="0.5" class="slider" id="distance" name="distance">
+                <div id="slidercontainer">
+                    <input type="range" min="0.5" max="300" value="5" step="0.5" class="slider" id="distance" name="distance" required />
                 </div>
 
-                <div id="distance-text"></div>
+                <div id="distance-text-container">{{  __('Distance') }}: <span id="distance-text"></span>km</div>
 
-                <div class="col-md-12 submit-button-container text-center">
+                <div class="submit-button-container text-center">
                     {!! Form::submit(__('Save notification'), ['class="form-control btn btn-primary"']) !!}
                 </div>
 

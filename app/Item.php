@@ -53,14 +53,23 @@ class Item extends Model
      * @param int $latitude Latitude of the submitted item location
      * @param int $longitude Longitude of the sumbitted item location
      * @param int $distance Distance radius
+     * @param int $paginateBy Number of items per page
+     * @param string $type Item type (all|lost|found)
      * @return object|void
      */
-    public static function nearbyItems($latitude = 0, $longitude = 0, $distance = 30, $paginateBy = 10)
+    public static function nearbyItems($latitude = 0, $longitude = 0, $distance = 30, $paginateBy = 10, $type = 'all')
     {
+        if($type === 'all') {
+            $type = null;
+        }
         $items = Item::selectRaw('*, items.id as item_id')
             ->leftJoin('locations as l', 'l.id', '=', 'location_id')
             ->leftJoin('images as i', 'i.item_id', '=', 'items.id')
             ->whereRaw($distance.' > (6371 * acos(cos(radians(' . $latitude . ')) * cos(radians(`lat`)) * cos(radians(`lng`) - radians(' . $longitude . ')) + sin(radians(' . $latitude . ')) * sin(radians(`lat`)))) AND `active` = 1')
+            ->when($type, function($query) use ($type) {
+                $query->where('items.type', '=', $type);
+            })
+            ->groupBy('items.id')
             ->orderBy('items.created_at','desc')
             ->paginate($paginateBy);
 

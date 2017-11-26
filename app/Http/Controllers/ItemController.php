@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Config;
 
+
 class ItemController extends Controller
 {
     /**
@@ -23,16 +24,25 @@ class ItemController extends Controller
     }
 
     /**
-     * Display the items
+     * List the items
      *
-     * @return Response
+     * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse
      */
     public function index()
     {
-        $items = Item::all();
-        return view('items.index')->with([
-            'items' => $items,
-        ]);
+        if(\Cookie::get('location_lat') === null && \Cookie::get('location_lng') === null) {
+            return redirect('/');
+        } else {
+            $type = \Illuminate\Support\Facades\Input::get('type');
+            if($type === null) {
+                $type = 'all';
+            }
+            $items = \App\Item::nearbyItems(\Cookie::get('location_lat'), \Cookie::get('location_lng'), $distance = 30, $paginateBy = 20, $type);
+            return view('items.index')->with([
+                'items' => $items,
+                'type' => $type,
+            ]);
+        }
     }
 
     /**
@@ -46,7 +56,6 @@ class ItemController extends Controller
             'categories' => Item::categories(),
         ]);
     }
-
 
     /**
      * Stores the item in the database and redirects to the image upload page
@@ -256,7 +265,7 @@ class ItemController extends Controller
         if($postData) {
             $lat = $postData['lat'];
             $lng = $postData['lng'];
-            $nearbyItems = \App\Item::nearbyItems($lat, $lng, $distance = 30, $paginateBy = 10);
+            $nearbyItems = \App\Item::nearbyItems($lat, $lng, $distance = 30, $paginateBy = 5, $type = 'all');
             header('Content-type: application/json');
             echo json_encode($nearbyItems);
         }
