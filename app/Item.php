@@ -62,9 +62,9 @@ class Item extends Model
         if($type === 'all') {
             $type = null;
         }
-        $items = Item::selectRaw('*, items.id as item_id')
+        $items = Item::selectRaw('items.id AS item_id, items.title as title, items.type as type, items.description as description, items.location as location, l.lat as lat, l.lng as lng, i.filename as filename, i.extension as extension')
             ->leftJoin('locations as l', 'l.id', '=', 'location_id')
-            ->leftJoin('images as i', 'i.item_id', '=', 'items.id')
+            ->join('images as i', 'i.item_id', '=', 'items.id')
             ->whereRaw($distance.' > (6371 * acos(cos(radians(' . $latitude . ')) * cos(radians(`lat`)) * cos(radians(`lng`) - radians(' . $longitude . ')) + sin(radians(' . $latitude . ')) * sin(radians(`lat`)))) AND `active` = 1')
             ->when($type, function($query) use ($type) {
                 $query->where('items.type', '=', $type);

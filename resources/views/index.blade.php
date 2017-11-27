@@ -147,12 +147,9 @@
                         @endphp
                         @foreach($items as $item)
                         @php
-                            $mainImage = $item->images()->where('image_order',0)->first();
                             $imageHtml = '';
-                            if(isset($mainImage)) {
-                                $filename = $mainImage->filename;
-                                $extension = $mainImage->extension;
-                                $imageHtml = '<img src="'.URL::to('/item_images').'/'.$item->id.'/'.$filename.'.'.$extension.'" width="100" style="float:left; margin-right:10px" />';
+                            if($item->filename) {
+                                $imageHtml = '<img src="'.URL::to('/item_images').'/'.$item->id.'/'.$item->filename.'.'.$item->$extension.'" width="100" style="float:left; margin-right:10px" />';
                             }
                             $description = trim(preg_replace('/\s\s+/', ' ', $item->description));
                         @endphp
