@@ -1,0 +1,78 @@
+
+body {
+  overflow: scroll;
+  -webkit-overflow-scrolling: touch;
+}
+
+ul.sorter {
+  display: block;
+  margin: 0 auto;
+  padding: 0;
+  width: 100%;
+}
+
+ul.sorter li {
+  display: block;
+  float: left;
+  margin: 0 0 8px 0;
+  cursor: pointer;
+  color: #333333;
+}
+
+ul.sorter li > span {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: #f1f1f1;
+  border: 1px solid #cccccc;
+  border-radius: 6px;
+  padding: 10px 0 10px 10px;
+}
+
+ul.sorter li i { color: #cc3300; }
+
+ul.sorter li.empty span {
+  background: none;
+  border: 1px dashed #cccccc;
+  cursor: pointer;
+  text-indent: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+ul.sorter li.empty i { display: none; }
+
+ul.sorter li i {
+  float: right;
+  margin: 0 10px 0 0;
+}
+
+.li_helper {
+  left: 0;
+  top: 0;
+  position: absolute;
+  display: none;
+  width: 100px;
+  cursor: pointer;
+}
+
+.li_helper span {
+  display: block;
+  width: 100%;
+  border: 1px solid #cccccc;
+  padding: 10px 0 10px 10px;
+  border-radius: 6px;
+  background-color: #f1f1f1;
+  color: #333333;
+}
+
+.li_helper i {
+  float: right;
+  margin: 0 10px 0 0;
+}
+
+.li_helper ul.sorter, ul.sorter ul.sorter {
+  margin: 14px auto 0 auto;
+  width: 100%;
+  padding: 0 0 0 30px;
+}

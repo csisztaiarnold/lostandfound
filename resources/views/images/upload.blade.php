@@ -65,39 +65,38 @@
             </div>
         @endif
 
-        <div class="col-xs-12 sortable">
-            @if($images)
-                <div class="col-xs-12">{{ __('Drag and drop to reorder your images. The first one will be your main one.') }}</div>
-                @foreach($images as $image)
-                    <div class="image-container" data-image-id="{{ $image->id }}"><img src="{{ URL::to('/item_images') }}/{{ $item->id }}/{{ $image->filename }}_thumb.{{ $image->extension }}" /><br /><a href="{{ URL::to('images/delete/'.$image->id) }}"><button class="btn btn-danger">{{ __('Delete image') }}</button></a></div>
-                @endforeach
-            @endif
-        </div>
+        @if($images)
+            <div class="col-xs-12">{{ __('Drag and drop to reorder your images. The first one will be your main one.') }}</div>
+            <ul class="sorter">
+            @foreach($images as $image)
+                <li data-image-id="{{ $image->id }}"><img src="{{ URL::to('/item_images') }}/{{ $item->id }}/{{ $image->filename }}_thumb.{{ $image->extension }}" /><br /><a href="{{ URL::to('images/delete/'.$image->id) }}"><button class="btn btn-danger"><span class="glyphicon glyphicon-remove"></span></button></a></li>
+            @endforeach
+            </ul>
+        @endif
+
 
         <script>
         $(document).ready(function(){
 
-            sortable('.image-container',{
-                items: '.image-container',
-            });
+            $('ul.sorter').amigoSorter({
 
-            sortable('.sortable')[0].addEventListener('sortupdate', function(e) {
+                onTouchEnd : function() {
+                    var imageOrderArray = [];
+                    var imageCounter = 0;
+                    $( "ul.sorter li" ).each(function( index ) {
+                        imageOrderArray[imageCounter] = $(this).data('image-id');
+                        imageCounter++;
+                    });
 
-                var index;
-                var images = e.detail.newStartList;
-                var imageOrderArray = [];
-                for (index = 0; index < images.length; ++index) {
-                    imageOrderArray[index] = images[index]['dataset']['imageId'];
+                    $.ajax({
+                        type: "POST",
+                        url: "{{ URL::to('/') }}/images/reorder",
+                        data: {
+                            imageOrderArray: imageOrderArray,
+                            _token: "{{ csrf_token() }}",
+                        }
+                    });
                 }
-
-                $.ajax({
-                    type: "POST",
-                    url: "{{ URL::to('/') }}/images/reorder",
-                    data: {
-                        imageOrderArray: imageOrderArray,
-                        _token: "{{ csrf_token() }}",
-                    }
-                });
 
             });
 
