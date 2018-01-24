@@ -36,7 +36,15 @@
         @if(count($images) > 0)
             <div class="images">
             @foreach($images as $image)
-                <a href="#" data-featherlight="{{ URL::to('/item_images') }}/{{ $item->id }}/{{ $image->filename }}.{{ $image->extension }}" class="gallery"><img src="{{ URL::to('/item_images') }}/{{ $item->id }}/{{ $image->filename }}_thumb.{{ $image->extension }}" /></a>
+                @php
+                    $filename = URL::to('/item_images').'/'.$item->id.'/'.$image->filename.'.'.$image->extension;
+                    $thumb_filename = URL::to('/item_images').'/'.$item->id.'/'.$image->filename.'_thumb.'.$image->extension;
+                    if(!file_exists('./item_images/'.$item->id.'/'.$image->filename.'.'.$image->extension)) {
+                        $filename = asset('img/no-image.png');
+                        $thumb_filename = asset('img/no-image.png');
+                    }
+                @endphp
+                <a href="#" data-featherlight="{{ $filename }}" class="gallery"><img src="{{ $thumb_filename }}" /></a>
             @endforeach
             </div>
         @endif

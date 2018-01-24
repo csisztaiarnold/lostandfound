@@ -194,7 +194,7 @@
     </div>
 
     <div class="container-fluid map-container">
-        <div id="new-item-link"><a href="{{ URL::to('items/create') }}" title="{{ __('Have you lost or found something? Submit it!') }}" class="add-new-item">{{ __('Have you lost or found something? Submit it!') }}</a></div>
+        <div id="new-item-link">{{ __('Have you lost or found something?') }} <a href="{{ URL::to('items/create') }}" title="{{ __('Have you lost or found something?') }} {{ __(' Submit it!') }}" class="add-new-item">{{ __(' Submit it!') }}</a></div>
         <div id="map"></div>
     </div>
 
